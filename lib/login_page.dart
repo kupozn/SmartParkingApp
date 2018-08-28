@@ -32,8 +32,14 @@ class _LoginPageState extends State<LoginPage>{
   void validateAndSubmit() async{
     if (validateAndSave()){
       try{
+        if(_formType == FormType.login){
           FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password); 
           print('Signed in: ${user.uid}');
+        }else{
+          FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password); 
+          print('Registered with: ${user.uid}');
+        }
+          
       } catch(e){
         print('Error: $e');
       }
@@ -41,8 +47,16 @@ class _LoginPageState extends State<LoginPage>{
   }
 
   void moveToRegister(){
+    formkey.currentState.reset();
     setState((){
       _formType = FormType.register;
+    });
+  }
+
+  void moveToLogin(){
+    formkey.currentState.reset();
+    setState((){
+      _formType = FormType.login;
     });
   }
 
@@ -50,7 +64,7 @@ class _LoginPageState extends State<LoginPage>{
   Widget build(BuildContext context){
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Flutter login page'),
+        title: new Text('Flutter login'),
       ),
       body: new Container(
         padding: EdgeInsets.all(16.0),
@@ -79,14 +93,27 @@ class _LoginPageState extends State<LoginPage>{
     ];
   }
   List<Widget> buildButton(){
-    return [new RaisedButton(
-                child: new Text('Login', style: new TextStyle(fontSize: 20.0)),
-                onPressed: validateAndSubmit,
-              ),
-              new FlatButton(
-                child: new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
-                onPressed: moveToRegister,
-              )
-    ];
+    if(_formType == FormType.login){
+      return [new RaisedButton(
+                  child: new Text('Login', style: new TextStyle(fontSize: 20.0)),
+                  onPressed: validateAndSubmit,
+                ),
+                new FlatButton(
+                  child: new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
+                  onPressed: moveToRegister,
+                )
+      ];
+    }else{
+      return [new RaisedButton(
+                  child: new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
+                  onPressed: validateAndSubmit,
+                ),
+                new FlatButton(
+                  child: new Text('Go to sign in', style: new TextStyle(fontSize: 20.0)),
+                  onPressed: moveToLogin,
+                )
+              ];
+    }
+      
   }
 }
