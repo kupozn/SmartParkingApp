@@ -33,11 +33,11 @@ class _LoginPageState extends State<LoginPage>{
     if (validateAndSave()){
       try{
         if(_formType == FormType.login){
-          //FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password); 
-          print('Signed in');
+          FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password); 
+          print('Signed in  : email = ${_email}');
         }else{
-          //FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password); 
-          print('Registered with');
+          FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password); 
+          print('Registered with : email = ${_email}');
         }
           
       } catch(e){
@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage>{
   Widget build(BuildContext context){
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Flutter login'),
+        title: new Text('Flutter login page'),
       ),
       body: new Container(
         padding: EdgeInsets.all(16.0),
