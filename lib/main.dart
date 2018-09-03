@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
+import 'Home.dart';
+import 'LoginPage.dart';
 import 'SplashScreen.dart';
 
 void main(){
@@ -8,14 +9,21 @@ void main(){
 
 class MyApp extends StatelessWidget{
 
+  final routes = <String, WidgetBuilder>{
+    HomePage.tag: (context) => HomePage(),
+    LoginPage.tag: (context) => LoginPage(),
+  };
   @override
   Widget build(BuildContext context){
     return new MaterialApp(
-      title: "Flutter login page",
+      title: "Flutter login ",
+      debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Nunito',
       ),
-      home: SplashScreen()
+      home: SplashScreen(),
+      routes: routes,
     );
   }
 
