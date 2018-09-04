@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget{
     final text = Padding(
       padding: EdgeInsets.all(8.0),
       child: Text(
-        'Welcome To My',
+        'Welcome To My App',
         style: TextStyle(fontSize: 30.0, color: Colors.black)
       ),
     );

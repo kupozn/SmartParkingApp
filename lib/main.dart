@@ -16,7 +16,8 @@ class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return new MaterialApp(
-      title: "Flutter test",
+      title: "Flutter test ",
+      debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',

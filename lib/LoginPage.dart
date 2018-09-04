@@ -27,24 +27,20 @@ class _LoginPageState extends State<LoginPage>{
       form.save();
       return true;
     }
+    print('false');
     return false;
   }
 
   void validateAndSubmit() async{
-    if (validateAndSave()){
+    if(validateAndSave()){
       try{
-        if(_formType == FormType.login){
-          FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password); 
-          print('Signed in  : email = ${_email}');
-        }else{
           FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password); 
-          print('Registered with : email = ${_email}');
-        }
-          
+          print('Registered with : email = ${_email}');   
       } catch(e){
         print('Error: $e');
       }
-      }
+    }
+      
   }
 
   void moveToRegister(){
@@ -63,32 +59,6 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   Widget build(BuildContext context){
-
-    final textbox = TextFormField(
-                autofocus: false,
-                decoration: new InputDecoration(
-                hintText: 'Email',
-                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-                obscureText: true,
-                //validator: (value) => value.isEmpty ? 'Email can not be empty' : null,
-                //onSaved: (value) => _password = value,
-              );
-    final button = Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(30.0),
-                    shadowColor: Colors.lightBlueAccent.shade100,
-                    elevation: 5.0,
-                    child: MaterialButton(
-                      minWidth: 200.0,
-                      height: 42.0,
-                      onPressed:(){Navigator.of(context).pushNamed(HomePage.tag);},
-                      color: Colors.lightBlueAccent,
-                      child: Text('Login', style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-                      )
-                    )
-                  );
     final logo = CircleAvatar(
                         backgroundColor: Colors.lightBlueAccent,
                         radius: 50.0,
@@ -99,66 +69,50 @@ class _LoginPageState extends State<LoginPage>{
                         ),
                       );
     return new Scaffold(
-      backgroundColor: Colors.redAccent,
+      backgroundColor: Colors.white,
       body: Center(
         child: ListView(
           shrinkWrap: true,
           padding: EdgeInsets.only(left: 24.0, right: 24.0),
           children: <Widget>[
-            logo, SizedBox(height: 30.0,), 
-            textbox, SizedBox(height: 10.0,),
-            textbox, SizedBox(height: 10.0,),
-            buildInputs('Hello'), SizedBox(height: 10.0,),
-            button
+            logo, SizedBox(height: 30.0,),
+            buildInputEmail('Email', false), SizedBox(height: 10.0,),
+            buildInputs('Password', true), SizedBox(height: 10.0,),
+            buildButton('Login')
           ],
         ),
       ),
-      // body: new Container(
-      //   padding: EdgeInsets.all(16.0),
-      //   child: new Form(
-      //     key: formkey,
-      //     child: new Column(
-      //       children: buildInputs('Login', 10.0) + buildInputs('Password', 10.0)+ buildButton(),
-      //     )
-      //   ),
-      // )
     );
   }
 
-  Widget buildInputs(words){
+  Widget buildInputs(words, cmd){
     return TextFormField(
                 autofocus: false,
                 decoration: new InputDecoration(
                 hintText: words,
                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-                obscureText: true,
-                validator: (value) => value.isEmpty ? words+' can not be empty' : null,
+                obscureText: cmd,
+                validator: (value) => value.isEmpty ? 'Password can not be empty' : null,
                 onSaved: (value) => _password = value,
               );
     
   }
-  List<Widget> buildButton(){
-    if(_formType == FormType.login){
-      return [new RaisedButton(
-                  child: new Text('Login', style: new TextStyle(fontSize: 20.0)),
-                  onPressed: validateAndSubmit,
-                ),
-                new FlatButton(
-                  child: new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
-                  onPressed: moveToRegister,
-                )
-      ];
-    }else{
-      return [new RaisedButton(
-                  child: new Text('Create an Account', style: new TextStyle(fontSize: 20.0)),
-                  onPressed: validateAndSubmit,
-                ),
-                new FlatButton(
-                  child: new Text('Go to sign in', style: new TextStyle(fontSize: 20.0)),
-                  onPressed: moveToLogin,
-                ),
-                new Padding(
+  Widget buildInputEmail(words, cmd){
+    return TextFormField(
+                autofocus: false,
+                decoration: new InputDecoration(
+                hintText: words,
+                contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+                obscureText: cmd,
+                validator: (value) => value.isEmpty ? 'Email can not be empty' : null,
+                onSaved: (value) => _email = value,
+              );
+    
+  }
+  Widget buildButton(words){
+    return Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: Material(
                     borderRadius: BorderRadius.circular(30.0),
@@ -167,15 +121,12 @@ class _LoginPageState extends State<LoginPage>{
                     child: MaterialButton(
                       minWidth: 200.0,
                       height: 42.0,
-                      onPressed: validateAndSubmit,
+                      onPressed:(){Navigator.of(context).pushNamed(HomePage.tag);},
                       color: Colors.lightBlueAccent,
-                      child: Text('Login', style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-                    ),
-                  
-                  ),
-                )
-              ];
-    }
+                      child: Text(words, style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                      )
+                    )
+                  );
       
   }
 }
