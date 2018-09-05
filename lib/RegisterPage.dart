@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'Home.dart';
-import 'RegisterPage.dart';
+import 'LoginPage.dart';
 
-class LoginPage extends StatefulWidget {
-  static String tag = 'LoginPage';
+class RegisterPage extends StatefulWidget {
+  static String tag = 'RegisterPage';
   @override
-  State<StatefulWidget> createState() => new _LoginPageState();
+  State<StatefulWidget> createState() => new  _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage>{
+enum FormType{
+  login, 
+  register
+}
+
+class _RegisterPageState extends State<RegisterPage>{
 
   final formkey = new GlobalKey<FormState>();
 
@@ -29,9 +33,9 @@ class _LoginPageState extends State<LoginPage>{
   void validateAndSubmit() async{
     if(validateAndSave()){
       try{
-          FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password); 
+          FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password); 
           print('Registered with : email = ${_email}'); 
-          Navigator.of(context).pushNamed(HomePage.tag);
+          Navigator.of(context).pushNamed(LoginPage.tag);
       } catch(e){
         print('Error: $e');
       }
@@ -39,10 +43,10 @@ class _LoginPageState extends State<LoginPage>{
       
   }
 
-  void moveToRegister(){
+  void moveToLogin(){
     formkey.currentState.reset();
     setState((){
-      Navigator.of(context).pushNamed(RegisterPage.tag);
+      Navigator.of(context).pushNamed(LoginPage.tag);
     });
   }
 
@@ -58,7 +62,7 @@ class _LoginPageState extends State<LoginPage>{
                         ),
                       );
     return new Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.greenAccent,
       body: Center(
         child: new Form(
           key: formkey,
@@ -69,8 +73,8 @@ class _LoginPageState extends State<LoginPage>{
             logo, SizedBox(height: 30.0,),
             buildInputEmail('Email', false), SizedBox(height: 10.0,),
             buildInputs('Password', true), SizedBox(height: 10.0,),
-            buildButton('Login', validateAndSubmit), SizedBox(height: 5.0,),
-            buildButton('Sign-up', moveToRegister)
+            buildButton('Create an account', validateAndSubmit), SizedBox(height: 5.0,),
+            buildButton('Have an account?', moveToLogin)
             ],
           ),
         ),
@@ -86,7 +90,7 @@ class _LoginPageState extends State<LoginPage>{
                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                 obscureText: cmd,
-                validator: (value) => value.isEmpty ? 'Password can not be empty' : null,
+                validator: (value) => value.isEmpty ? words+' can not be empty' : null,
                 onSaved: (value) => _password = value,
               );
     
@@ -99,7 +103,7 @@ class _LoginPageState extends State<LoginPage>{
                 contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                 obscureText: cmd,
-                validator: (value) => value.isEmpty ? 'Email can not be empty' : null,
+                validator: (value) => value.isEmpty ? words+' can not be empty' : null,
                 onSaved: (value) => _email = value,
               );
     
@@ -114,7 +118,7 @@ class _LoginPageState extends State<LoginPage>{
                     child: MaterialButton(
                       minWidth: 200.0,
                       height: 50.0,
-                      onPressed:cmd,
+                      onPressed: cmd,
                       color: Colors.lightBlueAccent,
                       child: Text(words, style: new TextStyle(fontSize: 20.0, color: Colors.white)),
                       )
