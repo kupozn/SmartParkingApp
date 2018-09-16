@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return new MaterialApp(
-      title: "Flutter test ",
+      title: "Smart-Parking",
       debugShowCheckedModeBanner: false,
       theme: new ThemeData(
         primarySwatch: Colors.blue,
