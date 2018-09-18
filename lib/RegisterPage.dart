@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'LoginPage.dart';
+import 'Auth.dart';
 
 class RegisterPage extends StatefulWidget {
   static String tag = 'RegisterPage';
+  RegisterPage({this.auth});
+  final BaseAuth auth;
   @override
   State<StatefulWidget> createState() => new  _RegisterPageState();
 }
@@ -16,6 +19,7 @@ enum FormType{
 class _RegisterPageState extends State<RegisterPage>{
 
   final formkey = new GlobalKey<FormState>();
+  
 
   String _email;
   String _password;
@@ -33,8 +37,8 @@ class _RegisterPageState extends State<RegisterPage>{
   void validateAndSubmit() async{
     if(validateAndSave()){
       try{
-          FirebaseUser user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password); 
-          print('Registered with : email = ${_email}'); 
+          String userId = await widget.auth.createUserwithEmailAndPassWord(_email, _password);
+          print('Registered with : email = $userId'); 
           Navigator.of(context).pushNamed(LoginPage.tag);
       } catch(e){
         print('Error: $e');
@@ -127,3 +131,4 @@ class _RegisterPageState extends State<RegisterPage>{
       
   }
 }
+

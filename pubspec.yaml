@@ -2,6 +2,7 @@ name: smart_parking
 description: A new Flutter project.
 
 dependencies:
+  cloud_firestore:
   flutter:
     sdk: flutter
   
