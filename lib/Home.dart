@@ -155,8 +155,8 @@ class _HomePageState extends State<HomePage> {
               if (!snapshot.hasData) return const Text('Loading...', style: TextStyle(fontSize: 100.0));
               return ListView.builder(
                 itemExtent: 80.0,
-                itemCount: snapshot.data.document.length,
-                itemBuilder: (context, index) => _buildListItem(context, snapshot.data.document[index]),
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: (context, index) => _buildListItem(context, snapshot.data.documents[index]),
               );
             }));
   }
