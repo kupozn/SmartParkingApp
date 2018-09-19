@@ -15,7 +15,6 @@ class _HomePageState extends State<HomePage> {
     try {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
       uid = user.email;
-      print(uid);
     } catch (e) {
       print('Error: $e');
     }
@@ -29,11 +28,9 @@ class _HomePageState extends State<HomePage> {
       child: Text(textei[_bottomNavIndex],
           style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
-    final text2 = Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
-    );
+
     if (_bottomNavIndex == 0) {
+      getCurrentUser();
       return Scaffold(
         bottomNavigationBar: buildButtomBar(),
         body: Center(
@@ -45,26 +42,14 @@ class _HomePageState extends State<HomePage> {
                 height: 30.0,
               ),
               text,
-              text2
             ],
           ),
         ),
       );
     } else if (_bottomNavIndex == 1) {
-        return Scaffold(
-          bottomNavigationBar: buildButtomBar(),
-          body: StreamBuilder(
-              stream: Firestore.instance.collection('Parking').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) return const Text('Loading...', style: TextStyle(fontSize: 100.0));
-                return ListView.builder(
-                  itemExtent: 80.0,
-                  itemCount: snapshot.data.document.length,
-                  itemBuilder: (context, index) => _buildListItem(context, snapshot.data.document[index]),
-                );
-              }));
+      return _stateReserve();
     } else {
-        return test();
+      return test();
     }
   }
 
@@ -79,23 +64,21 @@ class _HomePageState extends State<HomePage> {
         onTap: (int index) {
           setState(() {
             _bottomNavIndex = index;
-            if (_bottomNavIndex == 2) {
-              getCurrentUser();
-            }
+            
           });
         },
         items: [
           new BottomNavigationBarItem(
             icon: icon1,
-            title: new Text('test'),
+            title: new Text('Main'),
           ),
           new BottomNavigationBarItem(
             icon: icon1,
-            title: new Text('test1'),
+            title: new Text('Reserve'),
           ),
           new BottomNavigationBarItem(
             icon: icon1,
-            title: new Text('test2'),
+            title: new Text('Profile'),
           ),
         ]);
   }
@@ -103,7 +86,7 @@ class _HomePageState extends State<HomePage> {
   Scaffold test() {
     final text = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(textei[_bottomNavIndex],
+      child: Text(uid,
           style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
 
@@ -143,21 +126,31 @@ class _HomePageState extends State<HomePage> {
           style: Theme.of(context).textTheme.headline,
         ),
       ),
-    ]));
+    ]),
+    onTap: (){
+      document.reference.updateData({'status' : document['status'] == 'F' ? 'R' : 'F'});
+    } ,
+    );
   }
 
-  Widget _bodyItem() {
+  Widget _stateReserve() {
     return Scaffold(
-        bottomNavigationBar: buildButtomBar(),
-        body: StreamBuilder(
-            stream: Firestore.instance.collection('Parking').snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const Text('Loading...', style: TextStyle(fontSize: 100.0));
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: (context, index) => _buildListItem(context, snapshot.data.documents[index]),
-              );
-            }));
+      bottomNavigationBar: buildButtomBar(),
+      body: StreamBuilder(
+        stream: Firestore.instance.collection('Parking').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return const Text('Loading...', style: TextStyle(fontSize: 100.0));
+          return ListView.builder(
+            itemExtent: 80.0,
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) =>
+                _buildListItem(context, snapshot.data.documents[index]),
+                
+                
+          );
+        },
+      ),
+    );
   }
 }
