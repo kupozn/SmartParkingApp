@@ -10,8 +10,6 @@ class RegisterPage extends StatefulWidget {
   State<StatefulWidget> createState() => new _RegisterPageState();
 }
 
-enum FormType { login, register }
-
 class _RegisterPageState extends State<RegisterPage> {
   final formkey = new GlobalKey<FormState>();
 

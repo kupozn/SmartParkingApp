@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'LoginPage.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'HomePage';
@@ -28,7 +29,6 @@ class _HomePageState extends State<HomePage> {
       child: Text(textei[_bottomNavIndex],
           style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
-
     if (_bottomNavIndex == 0) {
       getCurrentUser();
       return Scaffold(
@@ -64,7 +64,6 @@ class _HomePageState extends State<HomePage> {
         onTap: (int index) {
           setState(() {
             _bottomNavIndex = index;
-            
           });
         },
         items: [
@@ -86,8 +85,7 @@ class _HomePageState extends State<HomePage> {
   Scaffold test() {
     final text = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(uid,
-          style: TextStyle(fontSize: 30.0, color: Colors.black)),
+      child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
 
     return Scaffold(
@@ -100,7 +98,10 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 30.0,
             ),
-            text,
+            text,SizedBox(
+                height: 50.0,
+              ),
+              buildButton('SignOut', signOut)
           ],
         ),
       ),
@@ -109,27 +110,28 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return ListTile(
-        title: Row(children: [
-      Expanded(
-        child: Text(
-          document['name'],
-          style: Theme.of(context).textTheme.headline,
+      title: Row(children: [
+        Expanded(
+          child: Text(
+            document['name'],
+            style: Theme.of(context).textTheme.headline,
+          ),
         ),
-      ),
-      Container(
-        decoration: const BoxDecoration(
-          color: Colors.grey,
+        Container(
+          decoration: const BoxDecoration(
+            color: Colors.grey,
+          ),
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            document['status'],
+            style: Theme.of(context).textTheme.headline,
+          ),
         ),
-        padding: const EdgeInsets.all(10.0),
-        child: Text(
-          document['status'],
-          style: Theme.of(context).textTheme.headline,
-        ),
-      ),
-    ]),
-    onTap: (){
-      document.reference.updateData({'status' : document['status'] == 'F' ? 'R' : 'F'});
-    } ,
+      ]),
+      onTap: () {
+        document.reference
+            .updateData({'status': document['status'] == 'F' ? 'R' : 'F'});
+      },
     );
   }
 
@@ -146,11 +148,35 @@ class _HomePageState extends State<HomePage> {
             itemCount: snapshot.data.documents.length,
             itemBuilder: (context, index) =>
                 _buildListItem(context, snapshot.data.documents[index]),
-                
-                
           );
         },
       ),
     );
+  }
+
+  Widget buildButton(words, cmd) {
+    return Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0),
+        child: Material(
+            borderRadius: BorderRadius.circular(30.0),
+            shadowColor: Colors.lightBlueAccent.shade100,
+            elevation: 5.0,
+            child: MaterialButton(
+              minWidth: 200.0,
+              height: 50.0,
+              onPressed: cmd,
+              color: Colors.lightBlueAccent,
+              child: Text(words,
+                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+            )));
+  }
+
+  void signOut() async {
+      try {
+        await FirebaseAuth.instance.signOut();
+        Navigator.of(context).pushNamed(LoginPage.tag);
+      } catch (e) {
+        print('Error: $e');
+      }
   }
 }
