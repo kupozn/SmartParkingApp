@@ -5,19 +5,18 @@ import 'SplashScreen.dart';
 import 'RegisterPage.dart';
 import 'Auth.dart';
 
-void main(){
+void main() {
   runApp(new MyApp());
 }
 
-class MyApp extends StatelessWidget{
-
+class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     HomePage.tag: (context) => HomePage(),
     LoginPage.tag: (context) => LoginPage(auth: new Auth()),
     RegisterPage.tag: (context) => RegisterPage(),
   };
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return new MaterialApp(
       title: "Smart-Parking",
       debugShowCheckedModeBanner: false,
@@ -29,5 +28,4 @@ class MyApp extends StatelessWidget{
       routes: routes,
     );
   }
-
 }
