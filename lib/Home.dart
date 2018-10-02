@@ -128,9 +128,34 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ]),
-      onTap: () {
-        document.reference
-            .updateData({'status': document['status'] == 'F' ? 'R' : 'F'});
+      onTap: () {showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              // return object of type AlertDialog
+              return AlertDialog(
+                title: new Text("AlertDialog Class"),
+                content: new Text("Creates an alert dialog.Typically used in conjunction with showDialog."+
+                "The contentPadding must not be null. The titlePadding defaults to null, which implies a default."),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  new FlatButton(
+                    child: new Text("Close"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new FlatButton(
+                    child: new Text("check"),
+                    onPressed: () {
+                      document.reference.updateData({'status': document['status'] == 'F' ? 'R' : 'F'});
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        
       },
     );
   }
@@ -170,6 +195,7 @@ class _HomePageState extends State<HomePage> {
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
   }
+
 
   void signOut() async {
       try {
