@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'LoginPage.dart';
-import 'ReservedPage.dart';
+import 'qrcode.dart';
+import 'dart:math' as math;
 
-class HomePage extends StatefulWidget {
-  static String tag = 'HomePage';
-  static String status = 'No';
+class ReservedPage extends StatefulWidget {
+  static String tag = 'ReservedPage';
   @override
-  State<StatefulWidget> createState() => new _HomePageState();
+  State<StatefulWidget> createState() => new _ReservedPage();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ReservedPage extends State<ReservedPage>  with TickerProviderStateMixin {
   int _bottomNavIndex = 0;
   String _value = '';
   String uid = 'asd';
@@ -24,9 +24,57 @@ class _HomePageState extends State<HomePage> {
     }
   }
   List<String> textei = ['count', 'reserve', 'uid'];
+
+  //*****TIMER CREATOR*********
+  AnimationController controller;
+  String get timerString {
+    Duration duration = controller.duration * controller.value;
+    return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 10),
+    );
+    controller.addListener((controller.value == 1.0 ? test1234 : test123));
+    
+  }
   
+
+void test1234(){
+  Log();
+}
+
+Widget Log() {
+    return AlertDialog(
+      title: new Text("ยืนยันนการจองที่จอด"),
+      content: new Text("You can only reserve parking at once"),
+      actions: <Widget>[
+        // usually buttons at the bottom of the dialog
+        new FlatButton(
+          child: new Text("ยกเลิก"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        new FlatButton(
+          child: new Text("ตกลง"),
+          onPressed: () {
+          },
+        ),
+      ],
+    );
+  }
+
+void test123(){
+}
+
   @override
   Widget build(BuildContext context) {
+    controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
     final text = Padding(
       padding: EdgeInsets.all(8.0),
       child: Text(textei[_bottomNavIndex],
@@ -91,14 +139,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Scaffold drop() {
-
-    final text = Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
-    );
-    List<String> nameDrop = _itemDrop();
-    _value = nameDrop.elementAt(0);
+  Widget _stateReserve() {
     return Scaffold(
       bottomNavigationBar: buildButtomBar(),
       body: Center(
@@ -106,48 +147,33 @@ class _HomePageState extends State<HomePage> {
           shrinkWrap: true,
           padding: EdgeInsets.only(left: 50.0, right: 24.0),
           children: <Widget>[
-            new DropdownButton(
-              value: _value,
-              items: nameDrop.map((String value){
-                return new DropdownMenuItem(
-                  value: value,
-                  child: new Row(
-                    children: <Widget>[
-                        new Text('${value}')
-                      ],
-                    ),
-                  );
-                }).toList(),
-              onChanged: null,
-            ),
-            SizedBox(
-              height: 30.0,
-            ),
-            text,SizedBox(
-                height: 50.0,
+            Align(
+              alignment: FractionalOffset.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Count Down", 
+                    style: TextStyle(fontSize: 30.0, color: Colors.black)
+                  ),
+                  new QrImage(
+                    data: "Hello, world in QR form!",
+                    size: 200.0,
+                  ),
+                  AnimatedBuilder(
+                    animation: controller,
+                    builder: (BuildContext context, Widget child) {
+                    return new Text(
+                      timerString,
+                      style: TextStyle(fontSize: 30.0, color: Colors.black),
+                    );
+                  }),
+                ],
               ),
-              buildButton('SignOut', signOut)
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _stateReserve() {
-    return Scaffold(
-      bottomNavigationBar: buildButtomBar(),
-      body: StreamBuilder(
-        stream: Firestore.instance.collection('Parking').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return const Text('Loading...', style: TextStyle(fontSize: 100.0));
-          return ListView.builder(
-            itemExtent: 80.0,
-            itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) => 
-              buildListItemPark(context, snapshot.data.documents[index]),
-          );
-        },
       ),
     );
   }
@@ -159,22 +185,6 @@ class _HomePageState extends State<HomePage> {
       } catch (e) {
         print('Error: $e');
       }
-  }
-
-  void changeStatus() => HomePage.status == 'No' ? "No" : "Reserved";
-
-  List<String> _itemDrop(){
-    List<String> list = [];
-    StreamBuilder(
-        stream: Firestore.instance.collection('numPark').snapshots(),
-        builder: (context, snapshot) {
-          for(int i=0; i <= snapshot.data.documents.length;i++){
-            list.add(snapshot.data.documents[i].toString());
-            }
-          }
-        );
-    return list;
-
   }
 
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
@@ -215,9 +225,8 @@ class _HomePageState extends State<HomePage> {
                   new FlatButton(
                     child: new Text("ตกลง"),
                     onPressed: () {
-                      changeStatus();
                       document.reference.updateData({'count': document['count']-1});
-                      Navigator.of(context).pushNamed(ReservedPage.tag);
+                      Navigator.of(context).pop();
                     },
                   ),
                 ],
@@ -244,5 +253,37 @@ class _HomePageState extends State<HomePage> {
               child: Text(words,
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
+  }
+}
+
+class TimerPainter extends CustomPainter {
+  TimerPainter({
+    this.animation,
+    this.backgroundColor,
+    this.color,
+  }) : super(repaint: animation);
+
+  final Animation<double> animation;
+  final Color backgroundColor, color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = 5.0
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawCircle(size.center(Offset.zero), size.width / 2.0, paint);
+    paint.color = color;
+    double progress = (1.0 - animation.value) * 2 * math.pi;
+    canvas.drawArc(Offset.zero & size, math.pi* 1.5, -progress, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(TimerPainter old) {
+    return animation.value != old.animation.value ||
+        color != old.color ||
+        backgroundColor != old.backgroundColor;
   }
 }
