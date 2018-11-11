@@ -70,6 +70,7 @@ Widget Log() {
   }
 
 void test123(){
+  
 }
 
   @override
@@ -233,7 +234,6 @@ void test123(){
               );
             },
           );
-        
       },
     );
   }
@@ -286,4 +286,6 @@ class TimerPainter extends CustomPainter {
         color != old.color ||
         backgroundColor != old.backgroundColor;
   }
+
+  
 }

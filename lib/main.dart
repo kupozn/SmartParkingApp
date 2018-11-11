@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
-      home: SplashScreen(),
+      home: HomePage(),
       routes: routes,
     );
   }
