@@ -29,8 +29,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        String userId =
-            await widget.auth.createUserwithEmailAndPassWord(_email, _password);
+        String userId = await widget.auth.createUserwithEmailAndPassWord(_email, _password);
         print('Registered with : email = $userId');
         Navigator.of(context).pushNamed(LoginPage.tag);
       } catch (e) {
