@@ -10,6 +10,7 @@ import 'qrcode.dart';
 class HomePage extends StatefulWidget {
   static String tag = 'HomePage';
   static String status = 'No';
+  static DocumentSnapshot test;
   @override
   State<StatefulWidget> createState() => new _HomePageState();
 }
@@ -240,7 +241,25 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       ]),
       onTap: () {showDialog(
             context: context,
-            builder: (BuildContext context) {
+            builder: (BuildContext context) {if(document['count'] == 0){
+              return AlertDialog(
+                title: new Text("ไม่สามารถจองที่จอดได้"),
+                content: new Text("ที่จอดที่นี่ได้ถูกจองเต็มจำนวนแล้ว กรุณาเลือกที่จอดที่อื่น"),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  new FlatButton(
+                    child: new Text("ตกลง"),
+                    onPressed: () {Navigator.of(context).pop();
+                      // if(HomePage.status == 'No'){
+                      //     document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
+                      //     HomePage.status = "Reserved";
+                      //   }
+                      //   Navigator.of(context).pushNamed(HomePage.tag);
+                    },
+                  ),
+                ],
+              );
+            }else{
               // return object of type AlertDialog
               return AlertDialog(
                 title: new Text("ยืนยันนการจองที่จอด"),
@@ -265,6 +284,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
                   ),
                 ],
               );
+            }
             },
           );
         
