@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'Auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'RegisterPage';
   RegisterPage({this.auth});
   final BaseAuth auth;
@@ -11,6 +13,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final formkey = new GlobalKey<FormState>();
 
   String _email;
@@ -29,8 +32,10 @@ class _RegisterPageState extends State<RegisterPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        String userId = await widget.auth.createUserwithEmailAndPassWord(_email, _password);
-        print('Registered with : email = $userId');
+        Firestore.instance.collection('Username').document('$_email').setData({'username' : "$_email", 'password' : "$_password"});
+        print('Email : $_email Password : $_password');
+        // String userId = await widget.auth.createUserwithEmailAndPassWord(_email, _password);
+        // print('Registered with : email = $_email password : $_password');
         Navigator.of(context).pushNamed(LoginPage.tag);
       } catch (e) {
         print('Error: $e');
@@ -81,7 +86,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 height: 5.0,
               ),
-              buildButton('Have an account?', moveToLogin)
+              buildButton('Back to login', moveToLogin)
             ],
           ),
         ),

@@ -10,6 +10,7 @@ abstract class BaseWidget {
 }
 
 class BuildWidget implements BaseWidget{
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'BuildWidget';
 
 

@@ -2,21 +2,33 @@ import 'package:flutter/material.dart';
 import 'Home.dart';
 import 'RegisterPage.dart';
 import 'Auth.dart';
+import 'package:random_string/random_string.dart' as random;
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class LoginPage extends StatefulWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   LoginPage({this.auth});
   final BaseAuth auth;
 
   static String tag = 'LoginPage';
   @override
   State<StatefulWidget> createState() => new _LoginPageState();
+  
 }
 
 class _LoginPageState extends State<LoginPage> {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final formkey = new GlobalKey<FormState>();
 
   String _email;
   String _password;
+  String _userkey;
+  String userJSon;
+  var snapshots;
+  bool isValidUser = false;
+  
+  
 
   bool validateAndSave() {
     final form = formkey.currentState;
@@ -31,13 +43,75 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        String userId = await widget.auth.signInwithEmailAndPassWord(_email, _password);
-        print('Registered with : email = $userId');
-        Navigator.of(context).pushNamed(HomePage.tag);
+        // String userId = await widget.auth.signInwithEmailAndPassWord(_email, _password);
+        // print('Registered with : email = $userId');
+        _userkey = random.randomAlphaNumeric(20);
+        print('Email : $_email Password : $_password');
+        userJSon = '{"Email" : "$_email", "Password" : "$_password", "Userkey" : "$_userkey"}';
+        print(userJSon);
+        getChannelName(_email, _password);
+        // authUserAndPassword(_email, _password);
+        // Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: null)));
+        // Navigator.of(context).pushNamed(HomePage.tag);
       } catch (e) {
         print('Error: $e');
       }
     }
+  }
+  void getChannelName(String username, String password) async {
+  var test;
+  var catched;
+  try{
+    DocumentSnapshot snapshot = await Firestore.instance.collection('Username').document('$username').get().noSuchMethod(catched);
+    test = snapshot;
+
+  }catch(e){
+    print('Error: $e');
+    // validateUsername();
+  }
+  print('***********catched : $catched***********');
+  if(username == test['username'] && password == test['password']){
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: null)));
+  }
+}
+Widget validateUsername() {
+  return AlertDialog(
+          title: new Text("invalid username"),
+          content: new Text("invalid username"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+}
+
+  void authUserAndPassword(){
+    print('****Authenthication****');
+    var data = Firestore.instance.collection('Username').getDocuments();
+    StreamBuilder(
+      stream: Firestore.instance.collection('Username').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData)
+            return Text('Loading', style: TextStyle(fontSize: 30.0, color: Colors.black));
+        this.snapshots = snapshot.data.documents['username'];
+        // print('****snapshot : $snapshot****');
+        // for(int i in snapshot.data.documents){
+        //   print('****Loop 1****');
+        //   for(int j in snapshot.data.documents[i]){
+        //     print('****Loop 2****');
+        //     if(snapshot.data.documents[i][j]['username'] == _email && snapshot.data.documents[i][j]['password'] == _password){
+        //       print('!!!!!!!!!!!!!!!!Success!!!!!!!!!!');
+        //         // Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: null)));
+        //     }
+        //   }
+        // }
+      }
+    );
+    print('****snapshot : $data****');
   }
 
   void moveToRegister() {
@@ -49,6 +123,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // authUserAndPassword();
     final logo = CircleAvatar(
       backgroundColor: Colors.lightBlueAccent,
       radius: 50.0,
@@ -79,11 +154,29 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 10.0,
               ),
-              buildButton('Login', validateAndSubmit),
+              Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Material(
+                  borderRadius: BorderRadius.circular(30.0),
+                  shadowColor: Colors.lightBlueAccent.shade100,
+                  elevation: 5.0,
+                  child: MaterialButton(
+                    minWidth: 200.0,
+                    height: 50.0,
+                    onPressed: (){if(isValidUser){
+
+                    }},
+                    color: Colors.lightBlueAccent,
+                    child: Text('Login',
+                        style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  )
+                )
+              ),
               SizedBox(
                 height: 5.0,
               ),
-              buildButton('Sign-up', moveToRegister)
+              buildButton('Sign-up', moveToRegister),
+
             ],
           ),
         ),
@@ -136,3 +229,4 @@ class _LoginPageState extends State<LoginPage> {
             )));
   }
 }
+

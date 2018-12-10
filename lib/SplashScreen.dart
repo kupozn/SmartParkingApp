@@ -6,9 +6,11 @@ import 'LoginPage.dart';
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   @override
   void initState() {
     // TODO: implement initState

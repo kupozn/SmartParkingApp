@@ -12,6 +12,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final routes = <String, WidgetBuilder>{
     HomePage.tag: (context) => HomePage(),
     LoginPage.tag: (context) => LoginPage(auth: new Auth()),
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
-      home: SplashScreen(),
+      home: LoginPage(),
       routes: routes,
     );
   }

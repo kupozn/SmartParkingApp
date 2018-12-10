@@ -6,19 +6,42 @@ import 'ReservedPage.dart';
 import 'SplashScreen.dart';
 import 'dart:math' as math;
 import 'qrcode.dart';
+import 'package:http/http.dart' as http;
+import 'package:random_string/random_string.dart' as random;
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'Auth.dart';
 
 class HomePage extends StatefulWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'HomePage';
   static String status = 'No';
   static DocumentSnapshot test;
+
+
+  final String userJSon;
+  final String response;
+
+  // In the constructor, require a UserJson
+  HomePage({Key key, @required this.userJSon, this.response}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => new _HomePageState();
+  State<StatefulWidget> createState() => new _HomePageState(userJSon, null);
 }
 
 class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
+  _HomePageState(String userJson, var response){
+    this.userJSon = userJson;
+    this.response = response;
+  }
   int _bottomNavIndex = 0;
+  String userJSon;
+  var response;
   String _value = '';
   String uid = 'asd';
+  Widget qrcode;
+  
   void getCurrentUser() async {
     try {
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
@@ -44,16 +67,21 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       );
     }
     // controller.addListener((controller.value == 1.0 ? test1234 : test123));
+
+    
+
   }
   
   @override
   Widget build(BuildContext context) {
     if (_bottomNavIndex == 0) {
-      getCurrentUser();
+      // getCurrentUser();
       if(HomePage.status == 'No') {
+        // _itemDrop();
+        print('********************HomePage ack Email and Password with JSon : $userJSon ********************');
         return _stateReserve();
       }else{
-        return _stateReserved();
+        return _stateReserved(response);
       }
     } else {
       return profile();
@@ -120,7 +148,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
         stream: Firestore.instance.collection('Parking').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return SplashScreen();
+            return Text('Loading', style: TextStyle(fontSize: 30.0, color: Colors.black));
           return ListView.builder(
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
@@ -132,7 +160,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
     );
   }
 
-  Widget _stateReserved() {
+  Widget _stateReserved(qrcode) {
       controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
       return Scaffold(
         bottomNavigationBar: buildButtomBar(),
@@ -155,10 +183,11 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
                     SizedBox(
                       height: 10.0,
                     ),
-                    new QrImage(
-                      data: "Hello, world in QR form!",
-                      size: 250.0,
-                    ),
+                    // new QrImage(
+                    //   data: "Hello, world in QR form!",
+                    //   size: 250.0,
+                    // ),
+                    getImage(),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -198,25 +227,33 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   }
 
   changeStatus(DocumentSnapshot document){
+    var url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example";
+    var response = http.get(url);
+    Image.network('$response');
+    print('$response');
     if(HomePage.status == 'No'){
       document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
       HomePage.status = "Reserved";
     }
-    Navigator.of(context).pushNamed(HomePage.tag);
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: '$response')));
+    // Navigator.of(context).pushNamed(HomePage.tag);
   } 
 
-  List<String> _itemDrop(){
-    List<String> list = [];
-    StreamBuilder(
-        stream: Firestore.instance.collection('Parking').snapshots(),
-        builder: (context, snapshot) {
-          for(int i=0; i <= snapshot.data.documents.length;i++){
-            list.add(snapshot.data.documents[i].toString());
-            }
-          }
-        );
-    return list;
-
+  Widget getImage(){
+    var data = random.randomAlphaNumeric(20);
+    
+    String url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$data";
+    print('**************************Img Data : $data**************************');
+    Image image = Image.network(url);
+    
+    return new Container(
+      width: 200,
+      height: 200,
+      child: new Padding(
+        padding: EdgeInsets.all(10.0),
+        child:  image,
+        ),
+    );
   }
 
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
@@ -310,51 +347,52 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   }
 
   /*ANOTHER CODE*/
-  Scaffold drop() {
+  // Scaffold drop() {
 
-    final text = Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
-    );
-    List<String> nameDrop = _itemDrop();
-    _value = nameDrop.elementAt(0);
-    return Scaffold(
-      bottomNavigationBar: buildButtomBar(),
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 50.0, right: 24.0),
-          children: <Widget>[
-            new DropdownButton(
-              value: _value,
-              items: nameDrop.map((String value){
-                return new DropdownMenuItem(
-                  value: value,
-                  child: new Row(
-                    children: <Widget>[
-                        new Text('${value}')
-                      ],
-                    ),
-                  );
-                }).toList(),
-              onChanged: null,
-            ),
-            SizedBox(
-              height: 30.0,
-            ),
-            text,SizedBox(
-                height: 50.0,
-              ),
-              buildButton('SignOut', signOut)
-          ],
-        ),
-      ),
-    );
-  }
+  //   final text = Padding(
+  //     padding: EdgeInsets.all(8.0),
+  //     child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
+  //   );
+  //   List<String> nameDrop = _itemDrop();
+  //   _value = nameDrop.elementAt(0);
+  //   return Scaffold(
+  //     bottomNavigationBar: buildButtomBar(),
+  //     body: Center(
+  //       child: ListView(
+  //         shrinkWrap: true,
+  //         padding: EdgeInsets.only(left: 50.0, right: 24.0),
+  //         children: <Widget>[
+  //           new DropdownButton(
+  //             value: _value,
+  //             items: nameDrop.map((String value){
+  //               return new DropdownMenuItem(
+  //                 value: value,
+  //                 child: new Row(
+  //                   children: <Widget>[
+  //                       new Text('${value}')
+  //                     ],
+  //                   ),
+  //                 );
+  //               }).toList(),
+  //             onChanged: null,
+  //           ),
+  //           SizedBox(
+  //             height: 30.0,
+  //           ),
+  //           text,SizedBox(
+  //               height: 50.0,
+  //             ),
+  //             buildButton('SignOut', signOut)
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   
 }
 
 class TimerPainter extends CustomPainter {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   TimerPainter({
     this.animation,
     this.backgroundColor,
