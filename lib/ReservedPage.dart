@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'LoginPage.dart';
 import 'qrcode.dart';
@@ -17,15 +16,6 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
   int _bottomNavIndex = 0;
   String _value = '';
   String uid = 'asd';
-  void getCurrentUser() async {
-    try {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      uid = user.email;
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   List<String> textei = ['count', 'reserve', 'uid'];
 
   //*****TIMER CREATOR*********
@@ -80,7 +70,6 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
           style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
     if (_bottomNavIndex == 0) {
-      getCurrentUser();
       return _stateReserve();
     } else {
       return test();
@@ -128,12 +117,11 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
             SizedBox(
               height: 30.0,
             ),
-            text,
-            SizedBox(
-              height: 50.0,
-            ),
-            buildButton('SignOut', signOut)
-          ],
+
+            text,SizedBox(
+                height: 50.0,
+              ),
+              // buildButton('SignOut', signOut)
         ),
       ),
     );
@@ -175,16 +163,6 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
       ),
     );
   }
-
-  void signOut() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushNamed(LoginPage.tag);
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
     return ListTile(
       title: Row(children: [

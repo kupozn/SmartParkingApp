@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'Home.dart';
 import 'RegisterPage.dart';
-import 'Auth.dart';
 import 'package:random_string/random_string.dart' as random;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class LoginPage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  LoginPage({this.auth});
-  final BaseAuth auth;
 
   static String tag = 'LoginPage';
   @override
@@ -163,9 +160,24 @@ Widget validateUsername() {
                   child: MaterialButton(
                     minWidth: 200.0,
                     height: 50.0,
-                    onPressed: (){if(isValidUser){
-
-                    }},
+                    onPressed: (){if(!isValidUser){
+                        AlertDialog(
+                          title: new Text("invalid username"),
+                          content: new Text("invalid username"),
+                          actions: <Widget>[
+                            // usually buttons at the bottom of the dialog
+                            new FlatButton(
+                              child: new Text("ตกลง"),
+                              onPressed: () {Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      }else{
+                        Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+                          new HomePage(userJSon: '$userJSon', response: null)));
+                      }
+                    },
                     color: Colors.lightBlueAccent,
                     child: Text('Login',
                         style: new TextStyle(fontSize: 20.0, color: Colors.white)),
@@ -229,4 +241,3 @@ Widget validateUsername() {
             )));
   }
 }
-

@@ -3,9 +3,7 @@ import 'Home.dart';
 import 'LoginPage.dart';
 import 'SplashScreen.dart';
 import 'RegisterPage.dart';
-import 'Auth.dart';
 import 'ReservedPage.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(new MyApp());
@@ -15,7 +13,7 @@ class MyApp extends StatelessWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final routes = <String, WidgetBuilder>{
     HomePage.tag: (context) => HomePage(),
-    LoginPage.tag: (context) => LoginPage(auth: new Auth()),
+    LoginPage.tag: (context) => LoginPage(),
     RegisterPage.tag: (context) => RegisterPage(),
     ReservedPage.tag: (context) => ReservedPage(),
   };
@@ -32,14 +30,4 @@ class MyApp extends StatelessWidget {
       routes: routes,
     );
   }
-
-  // void getCurrentUser() async {
-  //   String uid = 'asd';
-  //   try {
-  //     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-  //     uid = user.email;
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  // }
 }

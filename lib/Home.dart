@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'LoginPage.dart';
 import 'ReservedPage.dart';
@@ -10,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:random_string/random_string.dart' as random;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'Auth.dart';
 
 class HomePage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
@@ -42,14 +40,6 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   String uid = 'asd';
   Widget qrcode;
   
-  void getCurrentUser() async {
-    try {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      uid = user.email;
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
 
   AnimationController controller;
   String get timerString {
@@ -133,7 +123,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             text,SizedBox(
                 height: 50.0,
               ),
-              buildButton('SignOut', signOut)
+              // buildButton('SignOut', signOut)
           ],
         ),
       ),
@@ -212,14 +202,6 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       );
   }
 
-  void signOut() async {
-      try {
-        await FirebaseAuth.instance.signOut();
-        Navigator.of(context).pushNamed(LoginPage.tag);
-      } catch (e) {
-        print('Error: $e');
-      }
-  }
 
   cancleQueue() {
     HomePage.status = 'No';

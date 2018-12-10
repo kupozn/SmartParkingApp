@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
-import 'Auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'RegisterPage';
-  RegisterPage({this.auth});
-  final BaseAuth auth;
+  RegisterPage();
   @override
   State<StatefulWidget> createState() => new _RegisterPageState();
 }
