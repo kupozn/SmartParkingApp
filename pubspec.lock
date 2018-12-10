@@ -16,7 +16,7 @@ packages:
     source: hosted
     version: "1.0.4"
   cached_network_image:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: cached_network_image
       url: "https://pub.dartlang.org"
@@ -43,8 +43,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.11"
-<<<<<<< HEAD
-=======
   convert:
     dependency: transitive
     description:
@@ -59,7 +57,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.6"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -67,13 +64,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.2"
-  firebase_auth:
-    dependency: "direct dev"
-    description:
-      name: firebase_auth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.6"
   firebase_core:
     dependency: transitive
     description:
@@ -82,22 +72,19 @@ packages:
     source: hosted
     version: "0.2.5+1"
   firebase_database:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_database
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
-<<<<<<< HEAD
-=======
   firebase_storage:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_storage
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   flutter:
     dependency: "direct main"
     description: flutter
@@ -115,10 +102,8 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-<<<<<<< HEAD
-=======
   http:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -132,13 +117,12 @@ packages:
     source: hosted
     version: "3.1.3"
   image_picker:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: image_picker
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.10"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   matcher:
     dependency: transitive
     description:
@@ -160,8 +144,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.2"
-<<<<<<< HEAD
-=======
   path_provider:
     dependency: transitive
     description:
@@ -169,7 +151,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   qr:
     dependency: transitive
     description:
@@ -178,7 +159,7 @@ packages:
     source: hosted
     version: "1.0.1"
   qr_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: qr_flutter
       url: "https://pub.dartlang.org"
@@ -191,10 +172,8 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
-<<<<<<< HEAD
-=======
   random_string:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: random_string
       url: "https://pub.dartlang.org"
@@ -207,7 +186,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.3"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   sky_engine:
     dependency: transitive
     description: flutter
@@ -259,22 +237,16 @@ packages:
     dependency: transitive
     description:
       name: test_api
-<<<<<<< HEAD
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.1"
-=======
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.1"
   transparent_image:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: transparent_image
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.0"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   typed_data:
     dependency: transitive
     description:
@@ -282,8 +254,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
-<<<<<<< HEAD
-=======
   uuid:
     dependency: transitive
     description:
@@ -291,7 +261,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
->>>>>>> 8bcae0d83e39685f56fd97a6b0249635e8ba31a3
   vector_math:
     dependency: transitive
     description:
