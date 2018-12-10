@@ -122,9 +122,10 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
                 height: 50.0,
               ),
               // buildButton('SignOut', signOut)
+            ]
+          ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _stateReserve() {
