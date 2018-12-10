@@ -6,12 +6,14 @@ import 'qrcode.dart';
 import 'dart:math' as math;
 
 class ReservedPage extends StatefulWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'ReservedPage';
   @override
   State<StatefulWidget> createState() => new _ReservedPage();
 }
 
 class _ReservedPage extends State<ReservedPage>  with TickerProviderStateMixin {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   int _bottomNavIndex = 0;
   String _value = '';
   String uid = 'asd';
@@ -158,10 +160,10 @@ void test123(){
                     "Count Down", 
                     style: TextStyle(fontSize: 30.0, color: Colors.black)
                   ),
-                  new QrImage(
-                    data: "Hello, world in QR form!",
-                    size: 200.0,
-                  ),
+                  // new QrImage(
+                  //   data: "Hello, world in QR form!",
+                  //   size: 200.0,
+                  // ),
                   AnimatedBuilder(
                     animation: controller,
                     builder: (BuildContext context, Widget child) {
@@ -257,6 +259,7 @@ void test123(){
 }
 
 class TimerPainter extends CustomPainter {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   TimerPainter({
     this.animation,
     this.backgroundColor,
