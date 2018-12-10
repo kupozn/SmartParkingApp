@@ -14,21 +14,21 @@ class Auth implements BaseAuth {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   Future<String> signInwithEmailAndPassWord(
       String email, String password) async {
-    FirebaseUser user = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
-    return user.uid;
+    // FirebaseUser user = await FirebaseAuth.instance
+    //     .signInWithEmailAndPassword(email: email, password: password);
+    // return user.uid;
   }
 
   Future<String> createUserwithEmailAndPassWord(
       String email, String password) async {
-    FirebaseUser user = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    return user.uid;
+    // FirebaseUser user = await FirebaseAuth.instance
+    //     .createUserWithEmailAndPassword(email: email, password: password);
+    // return user.uid;
   }
 
   Future<String> currentUser() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return user.email;
+    // FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    // return user.email;
   }
 
   Future<Image> test1234() async {
