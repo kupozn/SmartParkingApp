@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr/qr.dart';
 
 class QrPainter extends CustomPainter {
-
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   QrPainter(
     String data,
     this.color,
@@ -50,6 +50,7 @@ class QrPainter extends CustomPainter {
 }
 
 class QrImage extends StatelessWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   QrImage({
     @required String data,
     this.size,

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'LoginPage.dart';
 import 'qrcode.dart';
 import 'dart:math' as math;
 
 class ReservedPage extends StatefulWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'ReservedPage';
   @override
   State<StatefulWidget> createState() => new _ReservedPage();
 }
 
-class _ReservedPage extends State<ReservedPage>  with TickerProviderStateMixin {
+class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   int _bottomNavIndex = 0;
   String _value = '';
   String uid = 'asd';
@@ -23,6 +25,7 @@ class _ReservedPage extends State<ReservedPage>  with TickerProviderStateMixin {
       print('Error: $e');
     }
   }
+
   List<String> textei = ['count', 'reserve', 'uid'];
 
   //*****TIMER CREATOR*********
@@ -40,15 +43,13 @@ class _ReservedPage extends State<ReservedPage>  with TickerProviderStateMixin {
       duration: Duration(seconds: 10),
     );
     controller.addListener((controller.value == 1.0 ? test1234 : test123));
-    
   }
-  
 
-void test1234(){
-  Log();
-}
+  void test1234() {
+    Log();
+  }
 
-Widget Log() {
+  Widget Log() {
     return AlertDialog(
       title: new Text("ยืนยันนการจองที่จอด"),
       content: new Text("You can only reserve parking at once"),
@@ -62,16 +63,13 @@ Widget Log() {
         ),
         new FlatButton(
           child: new Text("ตกลง"),
-          onPressed: () {
-          },
+          onPressed: () {},
         ),
       ],
     );
   }
 
-void test123(){
-  
-}
+  void test123() {}
 
   @override
   Widget build(BuildContext context) {
@@ -130,10 +128,11 @@ void test123(){
             SizedBox(
               height: 30.0,
             ),
-            text,SizedBox(
-                height: 50.0,
-              ),
-              buildButton('SignOut', signOut)
+            text,
+            SizedBox(
+              height: 50.0,
+            ),
+            buildButton('SignOut', signOut)
           ],
         ),
       ),
@@ -154,22 +153,20 @@ void test123(){
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    "Count Down", 
-                    style: TextStyle(fontSize: 30.0, color: Colors.black)
-                  ),
-                  new QrImage(
-                    data: "Hello, world in QR form!",
-                    size: 200.0,
-                  ),
+                  Text("Count Down",
+                      style: TextStyle(fontSize: 30.0, color: Colors.black)),
+                  // new QrImage(
+                  //   data: "Hello, world in QR form!",
+                  //   size: 200.0,
+                  // ),
                   AnimatedBuilder(
-                    animation: controller,
-                    builder: (BuildContext context, Widget child) {
-                    return new Text(
-                      timerString,
-                      style: TextStyle(fontSize: 30.0, color: Colors.black),
-                    );
-                  }),
+                      animation: controller,
+                      builder: (BuildContext context, Widget child) {
+                        return new Text(
+                          timerString,
+                          style: TextStyle(fontSize: 30.0, color: Colors.black),
+                        );
+                      }),
                 ],
               ),
             ),
@@ -180,12 +177,12 @@ void test123(){
   }
 
   void signOut() async {
-      try {
-        await FirebaseAuth.instance.signOut();
-        Navigator.of(context).pushNamed(LoginPage.tag);
-      } catch (e) {
-        print('Error: $e');
-      }
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushNamed(LoginPage.tag);
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
@@ -208,32 +205,34 @@ void test123(){
           ),
         ),
       ]),
-      onTap: () {showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              // return object of type AlertDialog
-              return AlertDialog(
-                title: new Text("ยืนยันนการจองที่จอด"),
-                content: new Text("You can only reserve parking at once"),
-                actions: <Widget>[
-                  // usually buttons at the bottom of the dialog
-                  new FlatButton(
-                    child: new Text("ยกเลิก"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  new FlatButton(
-                    child: new Text("ตกลง"),
-                    onPressed: () {
-                      document.reference.updateData({'count': document['count']-1});
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type AlertDialog
+            return AlertDialog(
+              title: new Text("ยืนยันนการจองที่จอด"),
+              content: new Text("You can only reserve parking at once"),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                new FlatButton(
+                  child: new Text("ยกเลิก"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                new FlatButton(
+                  child: new Text("ตกลง"),
+                  onPressed: () {
+                    document.reference
+                        .updateData({'count': document['count'] - 1});
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
@@ -257,6 +256,7 @@ void test123(){
 }
 
 class TimerPainter extends CustomPainter {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   TimerPainter({
     this.animation,
     this.backgroundColor,
@@ -277,7 +277,7 @@ class TimerPainter extends CustomPainter {
     canvas.drawCircle(size.center(Offset.zero), size.width / 2.0, paint);
     paint.color = color;
     double progress = (1.0 - animation.value) * 2 * math.pi;
-    canvas.drawArc(Offset.zero & size, math.pi* 1.5, -progress, false, paint);
+    canvas.drawArc(Offset.zero & size, math.pi * 1.5, -progress, false, paint);
   }
 
   @override
@@ -286,6 +286,4 @@ class TimerPainter extends CustomPainter {
         color != old.color ||
         backgroundColor != old.backgroundColor;
   }
-
-  
 }

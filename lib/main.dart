@@ -5,13 +5,14 @@ import 'SplashScreen.dart';
 import 'RegisterPage.dart';
 import 'Auth.dart';
 import 'ReservedPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 void main() {
   runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final routes = <String, WidgetBuilder>{
     HomePage.tag: (context) => HomePage(),
     LoginPage.tag: (context) => LoginPage(auth: new Auth()),
@@ -27,18 +28,18 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
-      home: SplashScreen(),
+      home: LoginPage(),
       routes: routes,
     );
   }
 
-  void getCurrentUser() async {
-    String uid = 'asd';
-    try {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      uid = user.email;
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
+  // void getCurrentUser() async {
+  //   String uid = 'asd';
+  //   try {
+  //     FirebaseUser user = await FirebaseAuth.instance.currentUser();
+  //     uid = user.email;
+  //   } catch (e) {
+  //     print('Error: $e');
+  //   }
+  // }
 }
