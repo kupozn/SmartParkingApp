@@ -154,7 +154,24 @@ Widget validateUsername() {
               SizedBox(
                 height: 10.0,
               ),
-              buildButton('Login', validateAndSubmit),
+              Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: Material(
+                  borderRadius: BorderRadius.circular(30.0),
+                  shadowColor: Colors.lightBlueAccent.shade100,
+                  elevation: 5.0,
+                  child: MaterialButton(
+                    minWidth: 200.0,
+                    height: 50.0,
+                    onPressed: (){if(isValidUser){
+
+                    }},
+                    color: Colors.lightBlueAccent,
+                    child: Text('Login',
+                        style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  )
+                )
+              ),
               SizedBox(
                 height: 5.0,
               ),
