@@ -12,10 +12,8 @@ void main() {
 class MyApp extends StatelessWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final routes = <String, WidgetBuilder>{
-    HomePage.tag: (context) => HomePage(),
     LoginPage.tag: (context) => LoginPage(),
     RegisterPage.tag: (context) => RegisterPage(),
-    ReservedPage.tag: (context) => ReservedPage(),
   };
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
-      home: LoginPage(),
+      home: SplashScreen(),
       routes: routes,
     );
   }
