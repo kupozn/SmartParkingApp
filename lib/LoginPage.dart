@@ -24,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   String _userkey;
   String _status;
   var snapshots;
+  var place;
   bool isValidUser = false;
   
   
@@ -49,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
   void getChannelName(String username, String password) async {
     var userData;
     var data;
-    var place;
+    
     try{
       DocumentSnapshot snapshot = await Firestore.instance.collection('Username').document('$username').get();
       userData = snapshot;
@@ -64,14 +65,42 @@ class _LoginPageState extends State<LoginPage> {
           
         }
         _status = userData['status'];
-        if(_status == 'Not Reserve'){
+        if(_status != 'Not Reserve'){
+          place = userData['place'];
+          DocumentSnapshot dataTime = await Firestore.instance.collection('Reserved Data').document('$_userkey').get();
+          DateTime time = dataTime['time'];
+          String dataStatus = dataTime['status'];
+          DateTime test = DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch+(1000*60*1));
+          var now = new DateTime.now();
+          var timediff = test.difference(now);
+          if(now.millisecondsSinceEpoch < test.millisecondsSinceEpoch || ((now.millisecondsSinceEpoch > test.millisecondsSinceEpoch) && dataStatus == 'Active')){
+            Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+              new ReservedPage(userName: '$username', userkey: '$_userkey', status: '$_status', place: '$place', time: timediff,)));
+          }else{
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: new Text("หมดเวลา"),
+                  content: new Text("การจองของท่านได้ถูกยกเลิก เนื่องจากโค้ดหมดอายุการใช้งาน"),
+                  actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
+                    new FlatButton(
+                      child: new Text("ตกลง"),
+                      onPressed: () {
+                        timeOut();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        }else{
           Navigator.push(context, new MaterialPageRoute(builder: (context) => 
             new HomePage(userName: '$username', userkey: '$_userkey', status: '$_status',)));
-        }else{
-          place = userData['place'];
-          Navigator.push(context, new MaterialPageRoute(builder: (context) => 
-            new ReservedPage(userName: '$username', userkey: '$_userkey', status: '$_status', place: '$place')));
         }
+        
         
       }else{
         invalidPassword();
@@ -97,6 +126,16 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     );
+  }
+
+  timeOut() async{
+    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+    var data = snapshot;
+    var numm = data['count'];
+    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+    Firestore.instance.collection('Username').document('$_userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ''});
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+      new HomePage(userName: '$_userName', userkey: '$_userkey', status: '$_status',)));;
   }
 
   void invalidPassword(){
