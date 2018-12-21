@@ -45,8 +45,6 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
   String get timerString {
     Duration duration = controller.duration * controller.value;
     return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
-    
-    
   }
 
   @override
@@ -117,7 +115,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Count Down", 
+                    "Count Down",
                     style: TextStyle(fontSize: 30.0, color: Colors.black)
                   ),
                   SizedBox(

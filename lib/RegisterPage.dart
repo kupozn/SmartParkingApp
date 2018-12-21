@@ -31,7 +31,6 @@ class _RegisterPageState extends State<RegisterPage> {
       try {
         await Firestore.instance.collection('Username').document('$_userName').get();
         duplicateUser();
-        
       } catch (e) {
         Firestore.instance.collection('Username').document('$_userName').setData({'username' : "$_userName", 'password' : "$_password", 'userkey' : "", 'status' : "Not Reserve"});
         Navigator.of(context).pushNamed(LoginPage.tag);

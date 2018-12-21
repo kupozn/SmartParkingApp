@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   var refData;
   DocumentSnapshot refDocument;
   Widget qrcode;
-  
+
   @override
   Widget build(BuildContext context) {
     if (_bottomNavIndex == 0) {
@@ -101,7 +101,6 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
 
   Widget _stateReserve() {
     /*******************HOME PAGE *******************/
-    
     return Scaffold(
       bottomNavigationBar: buildButtomBar(),
       backgroundColor: Colors.limeAccent,
@@ -113,13 +112,12 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
           return ListView.builder(
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) => 
+            itemBuilder: (context, index) =>
               buildListItemPark(context, snapshot.data.documents[index]),
           );
         },
       ),
     );
-    
   }
 
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
@@ -181,12 +179,10 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             }
             },
           );
-        
       },
     );
   }
 
-  
   Widget buildButton(words, cmd) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -221,14 +217,13 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       DateTime time = dataTime['time'];
       DateTime test = DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch+(1000*60*1));
       var timediff = test.difference(now);
-      Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+      Navigator.push(context, new MaterialPageRoute(builder: (context) =>
         new ReservedPage(userName: '$userName', userkey: '$userkey', status: '$status', place: '$place', time: timediff,)));
     }else{
       alreadyReserve();
 
     }
-    
-  } 
+  }
   alreadyReserve(){
     showDialog(
       context: context,
@@ -274,6 +269,4 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       },
     );
   }
-
-  
 }

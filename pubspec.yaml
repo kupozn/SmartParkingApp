@@ -1,5 +1,5 @@
 name: smart_parking
-description: A new Flutter project.
+description: parking reservation app
 
 dependencies:
   flutter:

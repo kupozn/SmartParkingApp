@@ -12,7 +12,7 @@ class LoginPage extends StatefulWidget {
   static String tag = 'LoginPage';
   @override
   State<StatefulWidget> createState() => new _LoginPageState();
-  
+
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -26,8 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   var snapshots;
   var place;
   bool isValidUser = false;
-  
-  
 
   bool validateAndSave() {
     final form = formkey.currentState;
@@ -50,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   void getChannelName(String username, String password) async {
     var userData;
     var data;
-    
+
     try{
       DocumentSnapshot snapshot = await Firestore.instance.collection('Username').document('$username').get();
       userData = snapshot;
@@ -59,10 +57,8 @@ class _LoginPageState extends State<LoginPage> {
         if(userData['userkey'] == null || userData['userkey'] == ''){
           _userkey = random.randomAlphaNumeric(20);
           Firestore.instance.collection('Username').document('$username').updateData({'userkey' : "$_userkey"});
-          
         }else{
           _userkey = userData['userkey'];
-          
         }
         _status = userData['status'];
         if(_status != 'Not Reserve'){
@@ -97,11 +93,9 @@ class _LoginPageState extends State<LoginPage> {
             );
           }
         }else{
-          Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+          Navigator.push(context, new MaterialPageRoute(builder: (context) =>
             new HomePage(userName: '$username', userkey: '$_userkey', status: '$_status',)));
         }
-        
-        
       }else{
         invalidPassword();
       }
@@ -134,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
     var numm = data['count'];
     await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
     Firestore.instance.collection('Username').document('$_userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ''});
-    Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+    Navigator.push(context, new MaterialPageRoute(builder: (context) =>
       new HomePage(userName: '$_userName', userkey: '$_userkey', status: '$_status',)));;
   }
 
@@ -253,6 +247,5 @@ class _LoginPageState extends State<LoginPage> {
               child: Text(words,
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
-
   }
 }
