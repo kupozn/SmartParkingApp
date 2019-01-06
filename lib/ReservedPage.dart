@@ -1,22 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'LoginPage.dart';
+import 'Home.dart';
 import 'qrcode.dart';
 import 'dart:math' as math;
 
 class ReservedPage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'ReservedPage';
+
+  final String userName;
+  final String userkey;
+  final String status;
+  final String place;
+
+  ReservedPage({Key key, @required this.userName, this.userkey, this.status, this.place}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => new _ReservedPage();
+  State<StatefulWidget> createState() => new _ReservedPage(userName, userkey, status, place);
 }
 
 class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
+  _ReservedPage(String userName, String userkey, String status, String place){
+    this.userName = userName;
+    this.userkey = userkey;
+    this.status = status;
+    this.place = place;
+  }
   int _bottomNavIndex = 0;
   String _value = '';
-  String uid = 'asd';
   List<String> textei = ['count', 'reserve', 'uid'];
+  DocumentSnapshot dataDocument;
+  String userName;
+  String userkey;
+  String status;
+  String place;
 
   //*****TIMER CREATOR*********
   AnimationController controller;
@@ -30,36 +49,10 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 10),
-    );
-    controller.addListener((controller.value == 1.0 ? test1234 : test123));
-  }
-
-  void test1234() {
-    Log();
-  }
-
-  Widget Log() {
-    return AlertDialog(
-      title: new Text("ยืนยันนการจองที่จอด"),
-      content: new Text("You can only reserve parking at once"),
-      actions: <Widget>[
-        // usually buttons at the bottom of the dialog
-        new FlatButton(
-          child: new Text("ยกเลิก"),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        new FlatButton(
-          child: new Text("ตกลง"),
-          onPressed: () {},
-        ),
-      ],
+      duration: Duration(minutes: 15),
     );
   }
 
-  void test123() {}
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +65,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
     if (_bottomNavIndex == 0) {
       return _stateReserve();
     } else {
-      return test();
+      return profile();
     }
   }
 
@@ -101,40 +94,16 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
         ]);
   }
 
-  Scaffold test() {
-    final text = Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
-    );
-
-    return Scaffold(
-      bottomNavigationBar: buildButtomBar(),
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 50.0, right: 24.0),
-          children: <Widget>[
-            SizedBox(
-              height: 30.0,
-            ),
-
-            text,SizedBox(
-                height: 50.0,
-              ),
-              // buildButton('SignOut', signOut)
-            ]
-          ),
-        ),
-      );
-  }
 
   Widget _stateReserve() {
+    controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
     return Scaffold(
       bottomNavigationBar: buildButtomBar(),
+      backgroundColor: Colors.limeAccent,
       body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(left: 50.0, right: 24.0),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Align(
               alignment: FractionalOffset.center,
@@ -142,20 +111,33 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("Count Down",
-                      style: TextStyle(fontSize: 30.0, color: Colors.black)),
-                  // new QrImage(
-                  //   data: "Hello, world in QR form!",
-                  //   size: 200.0,
-                  // ),
+                  Text(
+                    "Count Down", 
+                    style: TextStyle(fontSize: 30.0, color: Colors.black)
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  new QrImage(
+                    data: "$userkey",
+                    size: 250.0,
+                  ),
+                  // getImage(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
                   AnimatedBuilder(
-                      animation: controller,
-                      builder: (BuildContext context, Widget child) {
-                        return new Text(
-                          timerString,
-                          style: TextStyle(fontSize: 30.0, color: Colors.black),
-                        );
-                      }),
+                    animation: controller,
+                    builder: (BuildContext context, Widget child) {
+                    return new Text(
+                      timerString,
+                      style: TextStyle(fontSize: 30.0, color: Colors.black),
+                    );
+                  }),
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  buildButton('Cancle', cancleQueue),
                 ],
               ),
             ),
@@ -164,56 +146,106 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
       ),
     );
   }
-  Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
-    return ListTile(
-      title: Row(children: [
-        Expanded(
-          child: Text(
-            document['name'],
-            style: Theme.of(context).textTheme.headline,
-          ),
+
+  cancleQueue() async{
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("ยืนยันการยกเลิกการจองคิว"),
+          content: new Text("การยกเลิกการจองคิวจะไม่สามารถเรียกคืนคิวได้ ยืนยันที่ยกเลิกการจอง"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("ยกเลิก"),
+              onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {routeHomepage();
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+
+  routeHomepage() async{
+    var numm;
+    var data;
+    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+    data = snapshot;
+    numm = data['count'];
+    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+    await Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Not Reserve", 'place' : ""});
+    status = 'Not Reserve';
+    Navigator.push(context,  MaterialPageRoute(builder: (context) => new HomePage(userName: '$userName', userkey: '$userkey', status: '$status')));
+  }
+
+  Scaffold profile() {
+    final text = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text('Username : $userName', style: TextStyle(fontSize: 30.0, color: Colors.black)),
+    );
+
+    return Scaffold(
+      bottomNavigationBar: buildButtomBar(),
+      backgroundColor: Colors.limeAccent,
+      body: Center(
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(left: 50.0, right: 24.0),
+          children: <Widget>[
+            SizedBox(
+              height: 30.0,
+            ),
+            text,SizedBox(
+                height: 50.0,
+              ),
+              buildButton('SignOut', signOut)
+          ],
         ),
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.grey,
-          ),
-          padding: const EdgeInsets.all(10.0),
-          child: Text(
-            document['count'].toString().padLeft(3, '0'),
-            style: Theme.of(context).textTheme.headline,
-          ),
-        ),
-      ]),
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            // return object of type AlertDialog
-            return AlertDialog(
-              title: new Text("ยืนยันนการจองที่จอด"),
-              content: new Text("You can only reserve parking at once"),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                new FlatButton(
-                  child: new Text("ยกเลิก"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                new FlatButton(
-                  child: new Text("ตกลง"),
-                  onPressed: () {
-                    document.reference
-                        .updateData({'count': document['count'] - 1});
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
+      ),
+    );
+  }
+
+void signOut(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("ยืนยันที่จะลงชื่อออก"),
+          content: new Text("หากท่านออกจากระบบแล้ว สถานะการจองของท่านจะถูกยกเลิกทันที ยืนยันที่จะออกจากระบบหรือไม่"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("ยกเลิก"),
+              onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {
+                signOutAction();
+                Navigator.of(context).pushNamed(LoginPage.tag);
+              },
+            ),
+          ],
         );
       },
     );
+  }
+
+  signOutAction() async{
+    var numm;
+    var data;
+    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+    data = snapshot;
+    numm = data['count'];
+    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+    await Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ""});
   }
 
   Widget buildButton(words, cmd) {

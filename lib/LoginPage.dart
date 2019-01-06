@@ -3,6 +3,7 @@ import 'Home.dart';
 import 'RegisterPage.dart';
 import 'package:random_string/random_string.dart' as random;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'ReservedPage.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -18,10 +19,10 @@ class _LoginPageState extends State<LoginPage> {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final formkey = new GlobalKey<FormState>();
 
-  String _email;
+  String _userName;
   String _password;
   String _userkey;
-  String userJSon;
+  String _status;
   var snapshots;
   bool isValidUser = false;
   
@@ -33,50 +34,60 @@ class _LoginPageState extends State<LoginPage> {
       form.save();
       return true;
     }
-    print('false');
     return false;
   }
 
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        // String userId = await widget.auth.signInwithEmailAndPassWord(_email, _password);
-        // print('Registered with : email = $userId');
-        _userkey = random.randomAlphaNumeric(20);
-        print('Email : $_email Password : $_password');
-        userJSon = '{"Email" : "$_email", "Password" : "$_password", "Userkey" : "$_userkey"}';
-        print(userJSon);
-        getChannelName(_email, _password);
-        // authUserAndPassword(_email, _password);
-        // Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: null)));
-        // Navigator.of(context).pushNamed(HomePage.tag);
+        getChannelName(_userName, _password);
       } catch (e) {
         print('Error: $e');
       }
     }
   }
   void getChannelName(String username, String password) async {
-  var test;
-  var catched;
-  try{
-    DocumentSnapshot snapshot = await Firestore.instance.collection('Username').document('$username').get().noSuchMethod(catched);
-    test = snapshot;
-
-  }catch(e){
-    print('Error: $e');
-    // validateUsername();
+    var userData;
+    var data;
+    var place;
+    try{
+      DocumentSnapshot snapshot = await Firestore.instance.collection('Username').document('$username').get();
+      userData = snapshot;
+      data = userData['username'];
+      if(username == userData['username'] && password == userData['password']){
+        if(userData['userkey'] == null || userData['userkey'] == ''){
+          _userkey = random.randomAlphaNumeric(20);
+          Firestore.instance.collection('Username').document('$username').updateData({'userkey' : "$_userkey"});
+          
+        }else{
+          _userkey = userData['userkey'];
+          
+        }
+        _status = userData['status'];
+        if(_status == 'Not Reserve'){
+          Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+            new HomePage(userName: '$username', userkey: '$_userkey', status: '$_status',)));
+        }else{
+          place = userData['place'];
+          Navigator.push(context, new MaterialPageRoute(builder: (context) => 
+            new ReservedPage(userName: '$username', userkey: '$_userkey', status: '$_status', place: '$place')));
+        }
+        
+      }else{
+        invalidPassword();
+      }
+    }catch(e){
+      invalidUser();
+    }
   }
-  print('***********catched : $catched***********');
-  if(username == test['username'] && password == test['password']){
-    Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: null)));
-  }
-}
-Widget validateUsername() {
-  return AlertDialog(
-          title: new Text("invalid username"),
-          content: new Text("invalid username"),
+  void invalidUser(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("เกิดข้อผิดพลาด"),
+          content: new Text("ชื่อผู้ใช้นี้ไม่มีอยู่ในระบบ กรุณาตรวจสอบชื่อผู้ใช้งานให้ถูกต้อง"),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("ตกลง"),
               onPressed: () {Navigator.of(context).pop();
@@ -84,31 +95,27 @@ Widget validateUsername() {
             ),
           ],
         );
-}
-
-  void authUserAndPassword(){
-    print('****Authenthication****');
-    var data = Firestore.instance.collection('Username').getDocuments();
-    StreamBuilder(
-      stream: Firestore.instance.collection('Username').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData)
-            return Text('Loading', style: TextStyle(fontSize: 30.0, color: Colors.black));
-        this.snapshots = snapshot.data.documents['username'];
-        // print('****snapshot : $snapshot****');
-        // for(int i in snapshot.data.documents){
-        //   print('****Loop 1****');
-        //   for(int j in snapshot.data.documents[i]){
-        //     print('****Loop 2****');
-        //     if(snapshot.data.documents[i][j]['username'] == _email && snapshot.data.documents[i][j]['password'] == _password){
-        //       print('!!!!!!!!!!!!!!!!Success!!!!!!!!!!');
-        //         // Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: null)));
-        //     }
-        //   }
-        // }
       }
     );
-    print('****snapshot : $data****');
+  }
+
+  void invalidPassword(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("เกิดข้อผิดพลาด"),
+          content: new Text("ชื่อผู้ใช้กับรหัสผ่านไม่ตรงกันนี้ กรุณาตรวจสอบข้อมูลให้ถูกต้อง"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
+    );
   }
 
   void moveToRegister() {
@@ -151,39 +158,7 @@ Widget validateUsername() {
               SizedBox(
                 height: 10.0,
               ),
-              Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: Material(
-                  borderRadius: BorderRadius.circular(30.0),
-                  shadowColor: Colors.lightBlueAccent.shade100,
-                  elevation: 5.0,
-                  child: MaterialButton(
-                    minWidth: 200.0,
-                    height: 50.0,
-                    onPressed: (){if(!isValidUser){
-                        AlertDialog(
-                          title: new Text("invalid username"),
-                          content: new Text("invalid username"),
-                          actions: <Widget>[
-                            // usually buttons at the bottom of the dialog
-                            new FlatButton(
-                              child: new Text("ตกลง"),
-                              onPressed: () {Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      }else{
-                        Navigator.push(context, new MaterialPageRoute(builder: (context) => 
-                          new HomePage(userJSon: '$userJSon', response: null)));
-                      }
-                    },
-                    color: Colors.lightBlueAccent,
-                    child: Text('Login',
-                        style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-                  )
-                )
-              ),
+              buildButton('Login', validateAndSubmit),
               SizedBox(
                 height: 5.0,
               ),
@@ -220,7 +195,7 @@ Widget validateUsername() {
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
       obscureText: cmd,
       validator: (value) => value.isEmpty ? 'Email can not be empty' : null,
-      onSaved: (value) => _email = value,
+      onSaved: (value) => _userName = value,
     );
   }
 
@@ -239,5 +214,6 @@ Widget validateUsername() {
               child: Text(words,
                   style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
+
   }
 }

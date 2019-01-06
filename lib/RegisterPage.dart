@@ -14,7 +14,7 @@ class _RegisterPageState extends State<RegisterPage> {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   final formkey = new GlobalKey<FormState>();
 
-  String _email;
+  String _userName;
   String _password;
 
   bool validateAndSave() {
@@ -23,22 +23,39 @@ class _RegisterPageState extends State<RegisterPage> {
       form.save();
       return true;
     }
-    print('false');
     return false;
   }
 
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        Firestore.instance.collection('Username').document('$_email').setData({'username' : "$_email", 'password' : "$_password"});
-        print('Email : $_email Password : $_password');
-        // String userId = await widget.auth.createUserwithEmailAndPassWord(_email, _password);
-        // print('Registered with : email = $_email password : $_password');
-        Navigator.of(context).pushNamed(LoginPage.tag);
+        await Firestore.instance.collection('Username').document('$_userName').get();
+        duplicateUser();
+        
       } catch (e) {
-        print('Error: $e');
+        Firestore.instance.collection('Username').document('$_userName').setData({'username' : "$_userName", 'password' : "$_password", 'userkey' : "", 'status' : "Not Reserve"});
+        Navigator.of(context).pushNamed(LoginPage.tag);
       }
     }
+  }
+
+  void duplicateUser(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("เกิดข้อผิดพลาด"),
+          content: new Text("ชื่อผู้ใช้นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่อผู้ใช้อื่น"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
+    );
   }
 
   void moveToLogin() {
@@ -116,7 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
       obscureText: cmd,
       validator: (value) => value.isEmpty ? words + ' can not be empty' : null,
-      onSaved: (value) => _email = value,
+      onSaved: (value) => _userName = value,
     );
   }
 

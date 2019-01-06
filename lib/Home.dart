@@ -2,81 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'LoginPage.dart';
 import 'ReservedPage.dart';
-import 'SplashScreen.dart';
-import 'dart:math' as math;
-import 'qrcode.dart';
-import 'package:http/http.dart' as http;
-import 'package:random_string/random_string.dart' as random;
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'HomePage';
-  static String status = 'No';
-  static DocumentSnapshot test;
 
 
-  final String userJSon;
-  final String response;
+  final String userName;
+  final String userkey;
+  final String status;
 
-  // In the constructor, require a UserJson
-  HomePage({Key key, @required this.userJSon, this.response}) : super(key: key);
+  // In the constructor, require a userName, userkey, status, dataDocument
+  HomePage({Key key, @required this.userName, this.userkey, this.status}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _HomePageState(userJSon, null);
+  State<StatefulWidget> createState() => new _HomePageState(userName, userkey, status);
 }
 
 class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  _HomePageState(String userJson, var response){
-    this.userJSon = userJson;
-    this.response = response;
+  _HomePageState(String userName, String userkey, String status){
+    this.userName = userName;
+    this.userkey = userkey;
+    this.status = status;
   }
   int _bottomNavIndex = 0;
-  String userJSon;
-  var response;
-  String _value = '';
-  String uid = 'asd';
+  String userName;
+  String userkey;
+  String status;
+  var dataDocument;
+  var refData;
+  DocumentSnapshot refDocument;
   Widget qrcode;
-  
-
-  AnimationController controller;
-  String get timerString {
-    Duration duration = controller.duration * controller.value;
-    return '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
-  }
-
-  @override
-  void initState() {
-    if(HomePage.status != 'No'){
-      super.initState();
-      controller = AnimationController(
-        vsync: this,
-        duration: Duration(minutes: 15, seconds: 30),
-      );
-    }
-    // controller.addListener((controller.value == 1.0 ? test1234 : test123));
-
-    
-
-  }
   
   @override
   Widget build(BuildContext context) {
     if (_bottomNavIndex == 0) {
-      // getCurrentUser();
-      if(HomePage.status == 'No') {
-        // _itemDrop();
-        print('********************HomePage ack Email and Password with JSon : $userJSon ********************');
-        return _stateReserve();
-      }else{
-        return _stateReserved(response);
-      }
+      return _stateReserve();
     } else {
       return profile();
     }
   }
+
+  //**************** WIDGET ****************/
 
   Widget buildButtomBar() {
     final icon1 = Icon(
@@ -104,9 +72,10 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   }
 
   Scaffold profile() {
+    //************************PROFILE PAGE********************/
     final text = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
+      child: Text('Username : $userName', style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
 
     return Scaffold(
@@ -123,7 +92,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             text,SizedBox(
                 height: 50.0,
               ),
-              // buildButton('SignOut', signOut)
+              buildButton('SignOut', signOut)
           ],
         ),
       ),
@@ -131,6 +100,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   }
 
   Widget _stateReserve() {
+    /*******************HOME PAGE *******************/
     return Scaffold(
       bottomNavigationBar: buildButtomBar(),
       backgroundColor: Colors.limeAccent,
@@ -150,100 +120,13 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
     );
   }
 
-  Widget _stateReserved(qrcode) {
-      controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
-      return Scaffold(
-        bottomNavigationBar: buildButtomBar(),
-        backgroundColor: Colors.limeAccent,
-        body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Align(
-                alignment: FractionalOffset.center,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Count Down", 
-                      style: TextStyle(fontSize: 30.0, color: Colors.black)
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    // new QrImage(
-                    //   data: "Hello, world in QR form!",
-                    //   size: 250.0,
-                    // ),
-                    getImage(),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    AnimatedBuilder(
-                      animation: controller,
-                      builder: (BuildContext context, Widget child) {
-                      return new Text(
-                        timerString,
-                        style: TextStyle(fontSize: 30.0, color: Colors.black),
-                      );
-                    }),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    buildButton('Cancle', cancleQueue),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-  }
-
-
-  cancleQueue() {
-    HomePage.status = 'No';
-    Navigator.of(context).pushNamed(HomePage.tag);
-  }
-
-  changeStatus(DocumentSnapshot document){
-    var url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Example";
-    var response = http.get(url);
-    Image.network('$response');
-    print('$response');
-    if(HomePage.status == 'No'){
-      document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
-      HomePage.status = "Reserved";
-    }
-    Navigator.push(context, new MaterialPageRoute(builder: (context) => new HomePage(userJSon: '$userJSon', response: '$response')));
-    // Navigator.of(context).pushNamed(HomePage.tag);
-  } 
-
-  Widget getImage(){
-    var data = random.randomAlphaNumeric(20);
-    
-    String url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$data";
-    print('**************************Img Data : $data**************************');
-    Image image = Image.network(url);
-    
-    return new Container(
-      width: 200,
-      height: 200,
-      child: new Padding(
-        padding: EdgeInsets.all(10.0),
-        child:  image,
-        ),
-    );
-  }
-
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
+    /************************LIST ITEM IN HOME PAGE ***********************************/
     return ListTile(
       title: Row(children: [
         Expanded(
           child: Text(
-            document['name'],
+            document.documentID,
             style: Theme.of(context).textTheme.headline,
           ),
         ),
@@ -269,11 +152,6 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
                   new FlatButton(
                     child: new Text("ตกลง"),
                     onPressed: () {Navigator.of(context).pop();
-                      // if(HomePage.status == 'No'){
-                      //     document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
-                      //     HomePage.status = "Reserved";
-                      //   }
-                      //   Navigator.of(context).pushNamed(HomePage.tag);
                     },
                   ),
                 ],
@@ -294,11 +172,6 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
                   new FlatButton(
                     child: new Text("ตกลง"),
                     onPressed: () {changeStatus(document);
-                      // if(HomePage.status == 'No'){
-                      //     document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
-                      //     HomePage.status = "Reserved";
-                      //   }
-                      //   Navigator.of(context).pushNamed(HomePage.tag);
                     },
                   ),
                 ],
@@ -311,6 +184,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
     );
   }
 
+  
   Widget buildButton(words, cmd) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -328,81 +202,43 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             )));
   }
 
-  /*ANOTHER CODE*/
-  // Scaffold drop() {
+  //***************************************METHOD*************************************/
 
-  //   final text = Padding(
-  //     padding: EdgeInsets.all(8.0),
-  //     child: Text(uid, style: TextStyle(fontSize: 30.0, color: Colors.black)),
-  //   );
-  //   List<String> nameDrop = _itemDrop();
-  //   _value = nameDrop.elementAt(0);
-  //   return Scaffold(
-  //     bottomNavigationBar: buildButtomBar(),
-  //     body: Center(
-  //       child: ListView(
-  //         shrinkWrap: true,
-  //         padding: EdgeInsets.only(left: 50.0, right: 24.0),
-  //         children: <Widget>[
-  //           new DropdownButton(
-  //             value: _value,
-  //             items: nameDrop.map((String value){
-  //               return new DropdownMenuItem(
-  //                 value: value,
-  //                 child: new Row(
-  //                   children: <Widget>[
-  //                       new Text('${value}')
-  //                     ],
-  //                   ),
-  //                 );
-  //               }).toList(),
-  //             onChanged: null,
-  //           ),
-  //           SizedBox(
-  //             height: 30.0,
-  //           ),
-  //           text,SizedBox(
-  //               height: 50.0,
-  //             ),
-  //             buildButton('SignOut', signOut)
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+  changeStatus(DocumentSnapshot document){
+    var place = document.documentID;
+    if(status == 'Not Reserve'){
+      document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
+      Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Reserved", 'place' : "$place"});
+      Firestore.instance.collection('Reserved Data').document('$userName').setData({'place' : "$place"});
+    }
+    Navigator.push(context, new MaterialPageRoute(builder: (context) => new ReservedPage(userName: '$userName', userkey: '$userkey', status: '$status', place: '$place',)));
+  } 
+
+  void signOut(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("ยืนยันที่จะลงชื่อออก"),
+          content: new Text("หากท่านออกจากระบบแล้ว สถานะการจองของท่านจะถูกยกเลิกทันที ยืนยันที่จะออกจากระบบหรือไม่"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("ยกเลิก"),
+              onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve"});
+                              Navigator.of(context).pushNamed(LoginPage.tag);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   
-}
-
-class TimerPainter extends CustomPainter {
-  noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  TimerPainter({
-    this.animation,
-    this.backgroundColor,
-    this.color,
-  }) : super(repaint: animation);
-
-  final Animation<double> animation;
-  final Color backgroundColor, color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = backgroundColor
-      ..strokeWidth = 5.0
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.stroke;
-
-    canvas.drawCircle(size.center(Offset.zero), size.width / 2.0, paint);
-    paint.color = color;
-    double progress = (1.0 - animation.value) * 2 * math.pi;
-    canvas.drawArc(Offset.zero & size, math.pi* 1.5, -progress, false, paint);
-  }
-
-  @override
-  bool shouldRepaint(TimerPainter old) {
-    return animation.value != old.animation.value ||
-        color != old.color ||
-        backgroundColor != old.backgroundColor;
-  }
-
 }
