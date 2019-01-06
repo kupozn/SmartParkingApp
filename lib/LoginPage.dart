@@ -5,19 +5,17 @@ import 'package:random_string/random_string.dart' as random;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ReservedPage.dart';
 
-
 class LoginPage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
 
   static String tag = 'LoginPage';
   @override
-  State<StatefulWidget> createState() => new _LoginPageState();
-
+  State<StatefulWidget> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  final formkey = new GlobalKey<FormState>();
+  final formkey = GlobalKey<FormState>();
 
   String _userName;
   String _password;
@@ -45,44 +43,67 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+
   void getChannelName(String username, String password) async {
     var userData;
     var data;
 
-    try{
-      DocumentSnapshot snapshot = await Firestore.instance.collection('Username').document('$username').get();
+    try {
+      DocumentSnapshot snapshot = await Firestore.instance
+          .collection('Username')
+          .document('$username')
+          .get();
       userData = snapshot;
       data = userData['username'];
-      if(username == userData['username'] && password == userData['password']){
-        if(userData['userkey'] == null || userData['userkey'] == ''){
+      if (username == userData['username'] &&
+          password == userData['password']) {
+        if (userData['userkey'] == null || userData['userkey'] == '') {
           _userkey = random.randomAlphaNumeric(20);
-          Firestore.instance.collection('Username').document('$username').updateData({'userkey' : "$_userkey"});
-        }else{
+          Firestore.instance
+              .collection('Username')
+              .document('$username')
+              .updateData({'userkey': "$_userkey"});
+        } else {
           _userkey = userData['userkey'];
         }
         _status = userData['status'];
-        if(_status != 'Not Reserve'){
+        if (_status != 'Not Reserve') {
           place = userData['place'];
-          DocumentSnapshot dataTime = await Firestore.instance.collection('Reserved Data').document('$_userkey').get();
+          DocumentSnapshot dataTime = await Firestore.instance
+              .collection('Reserved Data')
+              .document('$_userkey')
+              .get();
           DateTime time = dataTime['time'];
           String dataStatus = dataTime['status'];
-          DateTime test = DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch+(1000*60*1));
-          var now = new DateTime.now();
+          DateTime test = DateTime.fromMillisecondsSinceEpoch(
+              time.millisecondsSinceEpoch + (1000 * 60 * 1));
+          var now = DateTime.now();
           var timediff = test.difference(now);
-          if(now.millisecondsSinceEpoch < test.millisecondsSinceEpoch || ((now.millisecondsSinceEpoch > test.millisecondsSinceEpoch) && dataStatus == 'Active')){
-            Navigator.push(context, new MaterialPageRoute(builder: (context) => 
-              new ReservedPage(userName: '$username', userkey: '$_userkey', status: '$_status', place: '$place', time: timediff,)));
-          }else{
+          if (now.millisecondsSinceEpoch < test.millisecondsSinceEpoch ||
+              ((now.millisecondsSinceEpoch > test.millisecondsSinceEpoch) &&
+                  dataStatus == 'Active')) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ReservedPage(
+                          userName: '$username',
+                          userkey: '$_userkey',
+                          status: '$_status',
+                          place: '$place',
+                          time: timediff,
+                        )));
+          } else {
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: new Text("หมดเวลา"),
-                  content: new Text("การจองของท่านได้ถูกยกเลิก เนื่องจากโค้ดหมดอายุการใช้งาน"),
+                  title: Text("หมดเวลา"),
+                  content: Text(
+                      "การจองของท่านได้ถูกยกเลิก เนื่องจากโค้ดหมดอายุการใช้งาน"),
                   actions: <Widget>[
                     // usually buttons at the bottom of the dialog
-                    new FlatButton(
-                      child: new Text("ตกลง"),
+                    FlatButton(
+                      child: Text("ตกลง"),
                       onPressed: () {
                         timeOut();
                       },
@@ -92,63 +113,86 @@ class _LoginPageState extends State<LoginPage> {
               },
             );
           }
-        }else{
-          Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-            new HomePage(userName: '$username', userkey: '$_userkey', status: '$_status',)));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        userName: '$username',
+                        userkey: '$_userkey',
+                        status: '$_status',
+                      )));
         }
-      }else{
+      } else {
         invalidPassword();
       }
-    }catch(e){
+    } catch (e) {
       invalidUser();
     }
   }
-  void invalidUser(){
+
+  void invalidUser() {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("เกิดข้อผิดพลาด"),
-          content: new Text("ชื่อผู้ใช้นี้ไม่มีอยู่ในระบบ กรุณาตรวจสอบชื่อผู้ใช้งานให้ถูกต้อง"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("ตกลง"),
-              onPressed: () {Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      }
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("เกิดข้อผิดพลาด"),
+            content: Text(
+                "ชื่อผู้ใช้นี้ไม่มีอยู่ในระบบ กรุณาตรวจสอบชื่อผู้ใช้งานให้ถูกต้อง"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("ตกลง"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
-  timeOut() async{
-    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+  timeOut() async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('Parking').document('$place').get();
     var data = snapshot;
     var numm = data['count'];
-    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
-    Firestore.instance.collection('Username').document('$_userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ''});
-    Navigator.push(context, new MaterialPageRoute(builder: (context) =>
-      new HomePage(userName: '$_userName', userkey: '$_userkey', status: '$_status',)));;
+    await Firestore.instance
+        .collection('Parking')
+        .document('$place')
+        .updateData({'count': numm + 1});
+    Firestore.instance
+        .collection('Username')
+        .document('$_userName')
+        .updateData({'userkey': "", 'status': "Not Reserve", 'place': ''});
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(
+                  userName: '$_userName',
+                  userkey: '$_userkey',
+                  status: '$_status',
+                )));
+    ;
   }
 
-  void invalidPassword(){
+  void invalidPassword() {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("เกิดข้อผิดพลาด"),
-          content: new Text("ชื่อผู้ใช้กับรหัสผ่านไม่ตรงกันนี้ กรุณาตรวจสอบข้อมูลให้ถูกต้อง"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("ตกลง"),
-              onPressed: () {Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      }
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("เกิดข้อผิดพลาด"),
+            content: Text(
+                "ชื่อผู้ใช้กับรหัสผ่านไม่ตรงกันนี้ กรุณาตรวจสอบข้อมูลให้ถูกต้อง"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("ตกลง"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void moveToRegister() {
@@ -170,10 +214,10 @@ class _LoginPageState extends State<LoginPage> {
         size: 50.0,
       ),
     );
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: Colors.yellowAccent,
       body: Center(
-        child: new Form(
+        child: Form(
           key: formkey,
           child: ListView(
             shrinkWrap: true,
@@ -196,7 +240,6 @@ class _LoginPageState extends State<LoginPage> {
                 height: 5.0,
               ),
               buildButton('Sign-up', moveToRegister),
-
             ],
           ),
         ),
@@ -207,7 +250,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget buildInputs(words, cmd) {
     return TextFormField(
       autofocus: false,
-      decoration: new InputDecoration(
+      decoration: InputDecoration(
           hintText: words,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border:
@@ -221,7 +264,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget buildInputEmail(words, cmd) {
     return TextFormField(
       autofocus: false,
-      decoration: new InputDecoration(
+      decoration: InputDecoration(
           hintText: words,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border:
@@ -245,7 +288,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: cmd,
               color: Colors.lightBlueAccent,
               child: Text(words,
-                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
   }
 }

@@ -13,9 +13,9 @@ class _SplashScreenState extends State<SplashScreen> {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Timer(Duration(seconds: 3), () => Navigator.of(context).pushNamed(LoginPage.tag));
+    Timer(Duration(seconds: 3),
+        () => Navigator.of(context).pushNamed(LoginPage.tag));
   }
 
   @override
@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         padding: EdgeInsets.only(top: 10.0),
                       ),
                       Text(
-                        "Park2EZ",
+                        'Park2EZ',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       padding: EdgeInsets.only(top: 20.0),
                     ),
                     Text(
-                      "Loading..",
+                      'Loading..',
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
