@@ -58,7 +58,7 @@ class QrImage extends StatelessWidget {
     this.backgroundColor,
     Color foregroundColor = const Color(0xFF000000),
     int version = 4,
-    int errorCorrectionLevel = QrErrorCorrectLevel.L,    
+    int errorCorrectionLevel = QrErrorCorrectLevel.L,
   }) : _painter = new QrPainter(data, foregroundColor, version, errorCorrectionLevel);
 
   final QrPainter _painter;

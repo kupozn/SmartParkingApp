@@ -13,20 +13,22 @@ class ReservedPage extends StatefulWidget {
   final String userkey;
   final String status;
   final String place;
+  final Duration time;
 
-  ReservedPage({Key key, @required this.userName, this.userkey, this.status, this.place}) : super(key: key);
+  ReservedPage({Key key, @required this.userName, this.userkey, this.status, this.place, this.time}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _ReservedPage(userName, userkey, status, place);
+  State<StatefulWidget> createState() => new _ReservedPage(userName, userkey, status, place, time);
 }
 
 class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  _ReservedPage(String userName, String userkey, String status, String place){
+  _ReservedPage(String userName, String userkey, String status, String place, var time){
     this.userName = userName;
     this.userkey = userkey;
     this.status = status;
     this.place = place;
+    this.time = time;
   }
   int _bottomNavIndex = 0;
   String _value = '';
@@ -36,6 +38,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
   String userkey;
   String status;
   String place;
+  Duration time;
 
   //*****TIMER CREATOR*********
   AnimationController controller;
@@ -45,11 +48,11 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
   }
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(minutes: 15),
+      duration: Duration(minutes: time.inMinutes, seconds: time.inSeconds % 60),
     );
   }
 
@@ -112,7 +115,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Count Down", 
+                    "Count Down",
                     style: TextStyle(fontSize: 30.0, color: Colors.black)
                   ),
                   SizedBox(
@@ -147,6 +150,14 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
     );
   }
 
+  // getTime() async{
+  //   DocumentSnapshot data = await Firestore.instance.collection('Reserved Data').document('$userkey').get();
+  //   DateTime time = data['time'];
+  //   var now = new DateTime.now();
+  //   var timediff = now.difference(time);
+  //   min = timediff.inMinutes;
+  // }
+
   cancleQueue() async{
     showDialog(
       context: context,
@@ -173,15 +184,24 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
 
 
   routeHomepage() async{
+    var _status;
     var numm;
     var data;
     DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
     data = snapshot;
     numm = data['count'];
-    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
-    await Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Not Reserve", 'place' : ""});
-    status = 'Not Reserve';
-    Navigator.push(context,  MaterialPageRoute(builder: (context) => new HomePage(userName: '$userName', userkey: '$userkey', status: '$status')));
+    DocumentSnapshot dataStatus = await Firestore.instance.collection('Username').document('$userName').get();
+    _status = dataStatus['status'];
+    print(status);
+    if(_status != 'Not Reserve'){
+      await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+      await Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Not Reserve", 'place' : ""});
+      await Firestore.instance.collection('ScanerTest').document('$userkey').delete();
+      status = 'Not Reserve';
+      Navigator.push(context,  MaterialPageRoute(builder: (context) => new HomePage(userName: '$userName', userkey: '$userkey', status: '$status')));
+    }else{
+      sessionOut();
+    }
   }
 
   Scaffold profile() {
@@ -210,7 +230,26 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
       ),
     );
   }
-
+  sessionOut(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("เกิดข้อผิดพลาด"),
+          content: new Text("การจองของท่านถูกยกเลิกแล้ว อาจเกิดจากการเข้าระบบจากที่อื่น กรุณาเข้าระบบใหม่อีกครั้งเพื่อเริ่มต้นการใช้งาน"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {
+                Navigator.of(context).pushNamed(LoginPage.tag);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 void signOut(){
     showDialog(
       context: context,
@@ -246,6 +285,7 @@ void signOut(){
     numm = data['count'];
     await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
     await Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ""});
+    await Firestore.instance.collection('ScanerTest').document('$userkey').delete();
   }
 
   Widget buildButton(words, cmd) {

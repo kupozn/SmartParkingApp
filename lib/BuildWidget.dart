@@ -6,7 +6,6 @@ import 'qrcode.dart';
 abstract class BaseWidget {
   Widget buildButton(words, cmd);
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document);
-  
 }
 
 class BuildWidget implements BaseWidget{
@@ -64,7 +63,6 @@ class BuildWidget implements BaseWidget{
               );
             },
           );
-        
       },
     );
   }
@@ -115,6 +113,4 @@ class BuildWidget implements BaseWidget{
   //     ),
   //   );
   // }
-
-  
 }

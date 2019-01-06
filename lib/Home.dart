@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   var refData;
   DocumentSnapshot refDocument;
   Widget qrcode;
-  
+
   @override
   Widget build(BuildContext context) {
     if (_bottomNavIndex == 0) {
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
           return ListView.builder(
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) => 
+            itemBuilder: (context, index) =>
               buildListItemPark(context, snapshot.data.documents[index]),
           );
         },
@@ -179,12 +179,10 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             }
             },
           );
-        
       },
     );
   }
 
-  
   Widget buildButton(words, cmd) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -204,15 +202,47 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
 
   //***************************************METHOD*************************************/
 
-  changeStatus(DocumentSnapshot document){
+  changeStatus(DocumentSnapshot document)async {
     var place = document.documentID;
+    var now = new DateTime.now();
+    DocumentSnapshot data = await Firestore.instance.collection('Username').document('$userName').get();
+    status = data['status'];
+    print(status);
     if(status == 'Not Reserve'){
       document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
       Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Reserved", 'place' : "$place"});
-      Firestore.instance.collection('Reserved Data').document('$userName').setData({'place' : "$place"});
+      Firestore.instance.collection('Reserved Data').document('$userkey').setData({'status': 'Not Active', 'place' : "$place", 'time' : now});
+      Firestore.instance.collection('ScanerTest').document('$userkey').setData({'place' : "$place"});
+      DocumentSnapshot dataTime = await Firestore.instance.collection('Reserved Data').document('$userkey').get();
+      DateTime time = dataTime['time'];
+      DateTime test = DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch+(1000*60*1));
+      var timediff = test.difference(now);
+      Navigator.push(context, new MaterialPageRoute(builder: (context) =>
+        new ReservedPage(userName: '$userName', userkey: '$userkey', status: '$status', place: '$place', time: timediff,)));
+    }else{
+      alreadyReserve();
+
     }
-    Navigator.push(context, new MaterialPageRoute(builder: (context) => new ReservedPage(userName: '$userName', userkey: '$userkey', status: '$status', place: '$place',)));
-  } 
+  }
+  alreadyReserve(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("เกิดข้อผิดพลาด"),
+          content: new Text("ไม่สามารถจองได้ เนื่องจากบัญชีของท่านได้ใช้งานการจองไปแล้วกรุณาเข้าสู่ระบบอีกครั้งเพื่อไปหน้าการจอง"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {Navigator.of(context).pushNamed(LoginPage.tag);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void signOut(){
     showDialog(
@@ -230,7 +260,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             ),
             new FlatButton(
               child: new Text("ตกลง"),
-              onPressed: () {Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve"});
+              onPressed: () {Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ''});
                               Navigator.of(context).pushNamed(LoginPage.tag);
               },
             ),
@@ -239,6 +269,4 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       },
     );
   }
-
-  
 }
