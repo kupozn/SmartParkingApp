@@ -129,10 +129,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   timeOut() async{
-    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+    DocumentSnapshot snapshot = await Firestore.instance.collection('numPark').document('$place').get();
     var data = snapshot;
     var numm = data['count'];
-    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+    await Firestore.instance.collection('numPark').document('$place').updateData({'count' : numm+1});
     Firestore.instance.collection('Username').document('$_userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ''});
     Navigator.push(context, new MaterialPageRoute(builder: (context) => 
       new HomePage(userName: '$_userName', userkey: '$_userkey', status: '$_status',)));;
@@ -189,7 +189,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 30.0,
               ),
-              buildInputEmail('Email', false),
+              buildInputEmail('Username', false),
               SizedBox(
                 height: 10.0,
               ),

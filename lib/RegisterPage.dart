@@ -29,12 +29,12 @@ class _RegisterPageState extends State<RegisterPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        await Firestore.instance.collection('Username').document('$_userName').get();
+        DocumentSnapshot data = await Firestore.instance.collection('Username').document('$_userName').get();
+        print(data['password']);
         duplicateUser();
-        
       } catch (e) {
         Firestore.instance.collection('Username').document('$_userName').setData({'username' : "$_userName", 'password' : "$_password", 'userkey' : "", 'status' : "Not Reserve"});
-        Navigator.of(context).pushNamed(LoginPage.tag);
+        loginSuccess();
       }
     }
   }
@@ -50,6 +50,25 @@ class _RegisterPageState extends State<RegisterPage> {
             new FlatButton(
               child: new Text("ตกลง"),
               onPressed: () {Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  loginSuccess(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text("การลงทะเบียนสำเร็จ"),
+          content: new Text("การลงทะเบียนสำเร็จ กดปุ่มตกลงเพื่อไปหน้าเข้าสู่ระบบ"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("ตกลง"),
+              onPressed: () {Navigator.of(context).pushNamed(LoginPage.tag);;
               },
             ),
           ],
@@ -89,7 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 height: 30.0,
               ),
-              buildInputEmail('Email', false),
+              buildInputEmail('Username', false),
               SizedBox(
                 height: 10.0,
               ),

@@ -189,14 +189,14 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
     var _status;
     var numm;
     var data;
-    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+    DocumentSnapshot snapshot = await Firestore.instance.collection('numPark').document('$place').get();
     data = snapshot;
     numm = data['count'];
     DocumentSnapshot dataStatus = await Firestore.instance.collection('Username').document('$userName').get();
     _status = dataStatus['status'];
     print(status);
     if(_status != 'Not Reserve'){
-      await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+      await Firestore.instance.collection('numPark').document('$place').updateData({'count' : numm+1});
       await Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Not Reserve", 'place' : ""});
       await Firestore.instance.collection('ScanerTest').document('$userkey').delete();
       status = 'Not Reserve';
@@ -282,10 +282,10 @@ void signOut(){
   signOutAction() async{
     var numm;
     var data;
-    DocumentSnapshot snapshot = await Firestore.instance.collection('Parking').document('$place').get();
+    DocumentSnapshot snapshot = await Firestore.instance.collection('numPark').document('$place').get();
     data = snapshot;
     numm = data['count'];
-    await Firestore.instance.collection('Parking').document('$place').updateData({'count' : numm+1});
+    await Firestore.instance.collection('numPark').document('$place').updateData({'count' : numm+1});
     await Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ""});
     await Firestore.instance.collection('ScanerTest').document('$userkey').delete();
   }
