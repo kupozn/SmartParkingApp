@@ -6,13 +6,11 @@ import 'qrcode.dart';
 abstract class BaseWidget {
   Widget buildButton(words, cmd);
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document);
-  
 }
 
-class BuildWidget implements BaseWidget{
+class BuildWidget implements BaseWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'BuildWidget';
-
 
   /*List of Parking Builder */
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
@@ -35,39 +33,41 @@ class BuildWidget implements BaseWidget{
           ),
         ),
       ]),
-      onTap: () {showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              // return object of type AlertDialog
-              return AlertDialog(
-                title: new Text("ยืนยันนการจองที่จอด"),
-                content: new QrImage(
-                    data: "Hello, world in QR form!",
-                    size: 100.0,
-                  ),
-                actions: <Widget>[
-                  // usually buttons at the bottom of the dialog
-                  new FlatButton(
-                    child: new Text("ยกเลิก"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  new FlatButton(
-                    child: new Text("ตกลง"),
-                    onPressed: () {
-                      document.reference.updateData({'count': document['count']-1});
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type AlertDialog
+            return AlertDialog(
+              title: Text("ยืนยันนการจองที่จอด"),
+              content: QrImage(
+                data: "Hello, world in QR form!",
+                size: 100.0,
+              ),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  child: Text("ยกเลิก"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  child: Text("ตกลง"),
+                  onPressed: () {
+                    document.reference
+                        .updateData({'count': document['count'] - 1});
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
+
   //*Button's Builder */
   Widget buildButton(words, cmd) {
     return Padding(
@@ -82,7 +82,7 @@ class BuildWidget implements BaseWidget{
               onPressed: cmd,
               color: Colors.lightBlueAccent,
               child: Text(words,
-                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
   }
 
@@ -96,7 +96,7 @@ class BuildWidget implements BaseWidget{
   //       shrinkWrap: true,
   //       padding: EdgeInsets.only(left: 50.0, right: 24.0),
   //       children: <Widget>[
-  //         new DropdownButton(
+  //          DropdownButton(
   //           items: document['name'],
   //           onChanged: (String value) {
   //             setState(() {
@@ -115,6 +115,4 @@ class BuildWidget implements BaseWidget{
   //     ),
   //   );
   // }
-
-  
 }

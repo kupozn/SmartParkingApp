@@ -37,7 +37,7 @@ class Auth implements BaseAuth {
         "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=$data";
     print(
         '**************************Img Data : $data**************************');
-    Image image = await Image.network(url);
+    Image image = Image.network(url);
     return image;
   }
 }

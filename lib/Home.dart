@@ -7,21 +7,22 @@ class HomePage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
   static String tag = 'HomePage';
 
-
   final String userName;
   final String userkey;
   final String status;
 
   // In the constructor, require a userName, userkey, status, dataDocument
-  HomePage({Key key, @required this.userName, this.userkey, this.status}) : super(key: key);
+  HomePage({Key key, @required this.userName, this.userkey, this.status})
+      : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _HomePageState(userName, userkey, status);
+  State<StatefulWidget> createState() =>
+      _HomePageState(userName, userkey, status);
 }
 
-class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  _HomePageState(String userName, String userkey, String status){
+  _HomePageState(String userName, String userkey, String status) {
     this.userName = userName;
     this.userkey = userkey;
     this.status = status;
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
   var refData;
   DocumentSnapshot refDocument;
   Widget qrcode;
-  
+
   @override
   Widget build(BuildContext context) {
     if (_bottomNavIndex == 0) {
@@ -52,7 +53,7 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       color: Colors.blueAccent,
       size: 30.0,
     );
-    return new BottomNavigationBar(
+    return BottomNavigationBar(
         currentIndex: _bottomNavIndex,
         onTap: (int index) {
           setState(() {
@@ -60,13 +61,13 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
           });
         },
         items: [
-          new BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: icon1,
-            title: new Text('Reserve'),
+            title: Text('Reserve'),
           ),
-          new BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: icon1,
-            title: new Text('Profile'),
+            title: Text('Profile'),
           ),
         ]);
   }
@@ -75,7 +76,8 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
     //************************PROFILE PAGE********************/
     final text = Padding(
       padding: EdgeInsets.all(8.0),
-      child: Text('Username : $userName', style: TextStyle(fontSize: 30.0, color: Colors.black)),
+      child: Text('Username : $userName',
+          style: TextStyle(fontSize: 30.0, color: Colors.black)),
     );
 
     return Scaffold(
@@ -89,10 +91,11 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
             SizedBox(
               height: 30.0,
             ),
-            text,SizedBox(
-                height: 50.0,
-              ),
-              buildButton('SignOut', signOut)
+            text,
+            SizedBox(
+              height: 50.0,
+            ),
+            buildButton('SignOut', signOut)
           ],
         ),
       ),
@@ -101,7 +104,6 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
 
   Widget _stateReserve() {
     /*******************HOME PAGE *******************/
-    
     return Scaffold(
       bottomNavigationBar: buildButtomBar(),
       backgroundColor: Colors.limeAccent,
@@ -109,17 +111,17 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
         stream: Firestore.instance.collection('numPark').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return Text('Loading', style: TextStyle(fontSize: 30.0, color: Colors.black));
+            return Text('Loading',
+                style: TextStyle(fontSize: 30.0, color: Colors.black));
           return ListView.builder(
             itemExtent: 80.0,
             itemCount: snapshot.data.documents.length,
-            itemBuilder: (context, index) => 
-              buildListItemPark(context, snapshot.data.documents[index]),
+            itemBuilder: (context, index) =>
+                buildListItemPark(context, snapshot.data.documents[index]),
           );
         },
       ),
     );
-    
   }
 
   Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
@@ -143,50 +145,53 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
           ),
         ),
       ]),
-      onTap: () {showDialog(
-            context: context,
-            builder: (BuildContext context) {if(document['count'] == 0){
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            if (document['count'] == 0) {
               return AlertDialog(
-                title: new Text("ไม่สามารถจองที่จอดได้"),
-                content: new Text("ที่จอดที่นี่ได้ถูกจองเต็มจำนวนแล้ว กรุณาเลือกที่จอดที่อื่น"),
+                title: Text("ไม่สามารถจองที่จอดได้"),
+                content: Text(
+                    "ที่จอดที่นี่ได้ถูกจองเต็มจำนวนแล้ว กรุณาเลือกที่จอดที่อื่น"),
                 actions: <Widget>[
                   // usually buttons at the bottom of the dialog
-                  new FlatButton(
-                    child: new Text("ตกลง"),
-                    onPressed: () {Navigator.of(context).pop();
+                  FlatButton(
+                    child: Text("ตกลง"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
                     },
                   ),
                 ],
               );
-            }else{
+            } else {
               // return object of type AlertDialog
               return AlertDialog(
                 title: new Text("ยืนยันนการจองที่จอด"),
                 content: new Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
                 actions: <Widget>[
                   // usually buttons at the bottom of the dialog
-                  new FlatButton(
-                    child: new Text("ยกเลิก"),
+                  FlatButton(
+                    child: Text("ยกเลิก"),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
-                  new FlatButton(
-                    child: new Text("ตกลง"),
-                    onPressed: () {changeStatus(document);
+                  FlatButton(
+                    child: Text("ตกลง"),
+                    onPressed: () {
+                      changeStatus(document);
                     },
                   ),
                 ],
               );
             }
-            },
-          );
-        
+          },
+        );
       },
     );
   }
 
-  
   Widget buildButton(words, cmd) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
@@ -200,47 +205,75 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
               onPressed: cmd,
               color: Colors.lightBlueAccent,
               child: Text(words,
-                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
   }
 
   //***************************************METHOD*************************************/
 
-  changeStatus(DocumentSnapshot document)async {
+  changeStatus(DocumentSnapshot document) async {
     var place = document.documentID;
-    var now = new DateTime.now();
-    DocumentSnapshot data = await Firestore.instance.collection('Username').document('$userName').get();
+    var now = DateTime.now();
+    DocumentSnapshot data = await Firestore.instance
+        .collection('Username')
+        .document('$userName')
+        .get();
     status = data['status'];
     print(status);
-    if(status == 'Not Reserve'){
-      document.reference.updateData({'count': (document['count'] > 0 ? document['count']-1 : document['count'])});
-      Firestore.instance.collection('Username').document('$userName').updateData({'status' : "Reserved", 'place' : "$place"});
-      Firestore.instance.collection('Reserved Data').document('$userkey').setData({'status': 'Not Active', 'place' : "$place", 'time' : now});
-      Firestore.instance.collection('ScanerTest').document('$userkey').setData({'place' : "$place"});
-      DocumentSnapshot dataTime = await Firestore.instance.collection('Reserved Data').document('$userkey').get();
+    if (status == 'Not Reserve') {
+      document.reference.updateData({
+        'count':
+            (document['count'] > 0 ? document['count'] - 1 : document['count'])
+      });
+      Firestore.instance
+          .collection('Username')
+          .document('$userName')
+          .updateData({'status': "Reserved", 'place': "$place"});
+      Firestore.instance
+          .collection('Reserved Data')
+          .document('$userkey')
+          .setData({'status': 'Not Active', 'place': "$place", 'time': now});
+      Firestore.instance
+          .collection('ScanerTest')
+          .document('$userkey')
+          .setData({'place': "$place"});
+      DocumentSnapshot dataTime = await Firestore.instance
+          .collection('Reserved Data')
+          .document('$userkey')
+          .get();
       DateTime time = dataTime['time'];
-      DateTime test = DateTime.fromMillisecondsSinceEpoch(time.millisecondsSinceEpoch+(1000*60*1));
+      DateTime test = DateTime.fromMillisecondsSinceEpoch(
+          time.millisecondsSinceEpoch + (1000 * 60 * 1));
       var timediff = test.difference(now);
-      Navigator.push(context, new MaterialPageRoute(builder: (context) => 
-        new ReservedPage(userName: '$userName', userkey: '$userkey', status: '$status', place: '$place', time: timediff,)));
-    }else{
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ReservedPage(
+                    userName: '$userName',
+                    userkey: '$userkey',
+                    status: '$status',
+                    place: '$place',
+                    time: timediff,
+                  )));
+    } else {
       alreadyReserve();
-
     }
-    
-  } 
-  alreadyReserve(){
+  }
+
+  alreadyReserve() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("เกิดข้อผิดพลาด"),
-          content: new Text("ไม่สามารถจองได้ เนื่องจากบัญชีของท่านได้ใช้งานการจองไปแล้วกรุณาเข้าสู่ระบบอีกครั้งเพื่อไปหน้าการจอง"),
+          title: Text("เกิดข้อผิดพลาด"),
+          content: Text(
+              "ไม่สามารถจองได้ เนื่องจากบัญชีของท่านได้ใช้งานการจองไปแล้วกรุณาเข้าสู่ระบบอีกครั้งเพื่อไปหน้าการจอง"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("ตกลง"),
-              onPressed: () {Navigator.of(context).pushNamed(LoginPage.tag);
+            FlatButton(
+              child: Text("ตกลง"),
+              onPressed: () {
+                Navigator.of(context).pushNamed(LoginPage.tag);
               },
             ),
           ],
@@ -249,24 +282,31 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
     );
   }
 
-  void signOut(){
+  void signOut() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("ยืนยันที่จะลงชื่อออก"),
-          content: new Text("หากท่านออกจากระบบแล้ว สถานะการจองของท่านจะถูกยกเลิกทันที ยืนยันที่จะออกจากระบบหรือไม่"),
+          title: Text("ยืนยันที่จะลงชื่อออก"),
+          content: Text(
+              "หากท่านออกจากระบบแล้ว สถานะการจองของท่านจะถูกยกเลิกทันที ยืนยันที่จะออกจากระบบหรือไม่"),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("ยกเลิก"),
-              onPressed: () {Navigator.of(context).pop();
+            FlatButton(
+              child: Text("ยกเลิก"),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
             ),
-            new FlatButton(
-              child: new Text("ตกลง"),
-              onPressed: () {Firestore.instance.collection('Username').document('$userName').updateData({'userkey' : "", 'status' : "Not Reserve", 'place' : ''});
-                              Navigator.of(context).pushNamed(LoginPage.tag);
+            FlatButton(
+              child: Text("ตกลง"),
+              onPressed: () {
+                Firestore.instance
+                    .collection('Username')
+                    .document('$userName')
+                    .updateData(
+                        {'userkey': "", 'status': "Not Reserve", 'place': ''});
+                Navigator.of(context).pushNamed(LoginPage.tag);
               },
             ),
           ],
@@ -274,6 +314,4 @@ class _HomePageState extends State<HomePage>  with TickerProviderStateMixin  {
       },
     );
   }
-
-  
 }

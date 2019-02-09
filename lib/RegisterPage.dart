@@ -7,12 +7,12 @@ class RegisterPage extends StatefulWidget {
   static String tag = 'RegisterPage';
   RegisterPage();
   @override
-  State<StatefulWidget> createState() => new _RegisterPageState();
+  State<StatefulWidget> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  final formkey = new GlobalKey<FormState>();
+  final formkey = GlobalKey<FormState>();
 
   String _userName;
   String _password;
@@ -29,33 +29,44 @@ class _RegisterPageState extends State<RegisterPage> {
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
-        DocumentSnapshot data = await Firestore.instance.collection('Username').document('$_userName').get();
-        print(data['password']);
+        await Firestore.instance
+            .collection('Username')
+            .document('$_userName')
+            .get();
         duplicateUser();
       } catch (e) {
-        Firestore.instance.collection('Username').document('$_userName').setData({'username' : "$_userName", 'password' : "$_password", 'userkey' : "", 'status' : "Not Reserve"});
-        loginSuccess();
+        Firestore.instance
+            .collection('Username')
+            .document('$_userName')
+            .setData({
+          'username': "$_userName",
+          'password': "$_password",
+          'userkey': "",
+          'status': "Not Reserve"
+        });
+        Navigator.of(context).pushNamed(LoginPage.tag);
       }
     }
   }
 
-  void duplicateUser(){
+  void duplicateUser() {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: new Text("เกิดข้อผิดพลาด"),
-          content: new Text("ชื่อผู้ใช้นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่อผู้ใช้อื่น"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("ตกลง"),
-              onPressed: () {Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      }
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("เกิดข้อผิดพลาด"),
+            content:
+                Text("ชื่อผู้ใช้นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่อผู้ใช้อื่น"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("ตกลง"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   loginSuccess(){
@@ -95,10 +106,10 @@ class _RegisterPageState extends State<RegisterPage> {
         size: 50.0,
       ),
     );
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: Colors.greenAccent,
       body: Center(
-        child: new Form(
+        child: Form(
           key: formkey,
           child: ListView(
             shrinkWrap: true,
@@ -131,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget buildInputs(words, cmd) {
     return TextFormField(
       autofocus: false,
-      decoration: new InputDecoration(
+      decoration: InputDecoration(
           hintText: words,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border:
@@ -145,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget buildInputEmail(words, cmd) {
     return TextFormField(
       autofocus: false,
-      decoration: new InputDecoration(
+      decoration: InputDecoration(
           hintText: words,
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border:
@@ -169,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: cmd,
               color: Colors.lightBlueAccent,
               child: Text(words,
-                  style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
             )));
   }
 }

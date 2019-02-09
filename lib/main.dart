@@ -6,7 +6,7 @@ import 'RegisterPage.dart';
 import 'ReservedPage.dart';
 
 void main() {
-  runApp(new MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -17,10 +17,10 @@ class MyApp extends StatelessWidget {
   };
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: "Smart-Parking",
       debugShowCheckedModeBanner: false,
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
