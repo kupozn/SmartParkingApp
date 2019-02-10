@@ -8,7 +8,7 @@ import 'ReservedPage.dart';
 class LoginPage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
 
-  static String tag = 'LoginPage';
+  static String tag = 'LoginPageold';
   @override
   State<StatefulWidget> createState() => _LoginPageState();
 }

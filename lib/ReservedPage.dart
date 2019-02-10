@@ -196,7 +196,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
     print(status);
     if (_status != 'Not Reserve') {
       await Firestore.instance
-          .collection('Parking')
+          .collection('numPark')
           .document('$place')
           .updateData({'count': numm + 1});
       await Firestore.instance
@@ -304,11 +304,11 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
     var numm;
     var data;
     DocumentSnapshot snapshot =
-        await Firestore.instance.collection('Parking').document('$place').get();
+        await Firestore.instance.collection('numPark').document('$place').get();
     data = snapshot;
     numm = data['count'];
     await Firestore.instance
-        .collection('Parking')
+        .collection('numPark')
         .document('$place')
         .updateData({'count': numm + 1});
     await Firestore.instance
