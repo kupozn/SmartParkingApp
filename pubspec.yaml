@@ -62,7 +62,7 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
 
   assets:
-      - assets/login_logo.png
+      - assets/
 
   fonts:
     - family: WorkSansSemiBold

@@ -167,8 +167,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             } else {
               // return object of type AlertDialog
               return AlertDialog(
-                title: new Text("ยืนยันนการจองที่จอด"),
-                content: new Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
+                title: Text("ยืนยันนการจองที่จอด"),
+                content: Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
                 actions: <Widget>[
                   // usually buttons at the bottom of the dialog
                   FlatButton(
