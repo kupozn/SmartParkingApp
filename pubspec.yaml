@@ -12,6 +12,7 @@ dependencies:
   cached_network_image: ^0.5.1
   transparent_image: ^0.1.0
   image_picker: ^0.4.10
+  google_maps_flutter: ^0.4.0
   
 
   # The following adds the Cupertino Icons font to your application.

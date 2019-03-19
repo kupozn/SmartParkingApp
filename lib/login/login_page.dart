@@ -7,6 +7,7 @@ import 'package:random_string/random_string.dart' as random;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:smart_parking/Home.dart';
 import 'package:smart_parking/ReservedPage.dart';
+import 'package:smart_parking/NewHome.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -27,8 +28,8 @@ class _LoginPageState extends State<LoginPage>
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
 
-  TextEditingController loginUserNameController = new TextEditingController();
-  TextEditingController loginPasswordController = new TextEditingController();
+  TextEditingController userNameController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
 
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
@@ -36,8 +37,6 @@ class _LoginPageState extends State<LoginPage>
   bool _usernameValidate = false;
   bool _passwordValidate = false;
 
-  TextEditingController signupUserNameController = new TextEditingController();
-  TextEditingController signupPasswordController = new TextEditingController();
 
   PageController _pageController;
 
@@ -63,9 +62,9 @@ class _LoginPageState extends State<LoginPage>
         child: SingleChildScrollView(
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height >= 775.0
+                height: MediaQuery.of(context).size.height >= 600.0
                     ? MediaQuery.of(context).size.height
-                    : 775.0,
+                    : 600.0,
                 decoration: new BoxDecoration(
                   gradient: new LinearGradient(
                       colors: [
@@ -97,6 +96,8 @@ class _LoginPageState extends State<LoginPage>
                       child: PageView(
                         controller: _pageController,
                         onPageChanged: (i) {
+                          this.userNameController = new TextEditingController();
+                          this.passwordController = new TextEditingController();
                           if (i == 0) {
                             setState(() {
                               right = Colors.white;
@@ -167,9 +168,9 @@ class _LoginPageState extends State<LoginPage>
     ));
   }
 
-  void validateLogin(String value) async{
-    this._userName = loginUserNameController.text;
-    this._password = loginPasswordController.text;
+  void validateLogin() async{
+    this._userName = userNameController.text;
+    this._password = passwordController.text;
     
     this._userName.isEmpty ? this._usernameValidate = true : this._usernameValidate = false;
     this._password.isEmpty ? this._passwordValidate = true : this._passwordValidate = false;
@@ -256,7 +257,7 @@ class _LoginPageState extends State<LoginPage>
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
                           focusNode: myFocusNodeEmailLogin,
-                          controller: loginUserNameController,
+                          controller: userNameController,
                           
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
@@ -285,7 +286,7 @@ class _LoginPageState extends State<LoginPage>
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
                           focusNode: myFocusNodePasswordLogin,
-                          controller: loginPasswordController,
+                          controller: passwordController,
                           obscureText: _obscureTextLogin,
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
@@ -358,22 +359,9 @@ class _LoginPageState extends State<LoginPage>
                       ),
                     ),
                     onPressed: () =>
-                        validateLogin("Login button pressed")),
+                        validateLogin()),
               ),
             ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: FlatButton(
-                onPressed: () {},
-                child: Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontFamily: "WorkSansMedium"),
-                )),
           ),
           Padding(
             padding: EdgeInsets.only(top: 10.0),
@@ -492,7 +480,7 @@ class _LoginPageState extends State<LoginPage>
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
                           focusNode: myFocusNodeEmailLogin,
-                          controller: loginUserNameController,
+                          controller: userNameController,
                           
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
@@ -521,8 +509,8 @@ class _LoginPageState extends State<LoginPage>
                             top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                         child: TextField(
                           focusNode: myFocusNodePasswordLogin,
-                          controller: loginPasswordController,
-                          obscureText: _obscureTextLogin,
+                          controller: passwordController,
+                          obscureText: _obscureTextSignup,
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
@@ -594,7 +582,7 @@ class _LoginPageState extends State<LoginPage>
                       ),
                     ),
                     onPressed: () =>
-                        showInSnackBar("SignUp button pressed")),
+                        validateSignUp()),
               ),
             ],
           ),
@@ -788,14 +776,15 @@ class _LoginPageState extends State<LoginPage>
             );
           }
         } else {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage(
-                        userName: '$username',
-                        userkey: '$_userkey',
-                        status: '$_status',
-                      )));
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => HomePage(
+          //               userName: '$username',
+          //               userkey: '$_userkey',
+          //               status: '$_status',
+          //             )));
+          Navigator.of(context).pushNamed(LoginPagee.tag);
         }
       } else {
         invalidPassword();
@@ -838,15 +827,91 @@ class _LoginPageState extends State<LoginPage>
         .collection('Username')
         .document('$_userName')
         .updateData({'userkey': "", 'status': "Not Reserve", 'place': ''});
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(
-                  userName: '$_userName',
-                  userkey: '$_userkey',
-                  status: '$_status',
-                )));
-    ;
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => HomePage(
+    //               userName: '$_userName',
+    //               userkey: '$_userkey',
+    //               status: '$_status',
+    //             )));
+    Navigator.of(context).pushNamed(LoginPagee.tag);
+    
+  }
+
+  void validateSignUp() async {
+    this._userName = userNameController.text;
+    this._password = passwordController.text;
+
+    this._userName.isEmpty ? this._usernameValidate = true : this._usernameValidate = false;
+    this._password.isEmpty ? this._passwordValidate = true : this._passwordValidate = false;
+
+    print('$_userName, $_password');
+    if(this._usernameValidate || this._passwordValidate){
+      emptyFeilds();
+    }else{
+      try {
+      DocumentSnapshot snapshot = await Firestore.instance
+          .collection('Username')
+          .document('$_userName')
+          .get();
+      print(snapshot['username']);
+      duplicateUser();
+    } catch (e) {
+      Firestore.instance
+          .collection('Username')
+          .document('$_userName')
+          .setData({
+        'username': "$_userName",
+        'password': "$_password",
+        'userkey': "",
+        'status': "Not Reserve"
+      });
+      signUpSeccess();
+      }
+    }
+    
+  }
+
+  void duplicateUser() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("เกิดข้อผิดพลาด"),
+            content:
+                Text("ชื่อผู้ใช้นี้มีอยู่ในระบบแล้ว กรุณาใช้ชื่อผู้ใช้อื่น"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("ตกลง"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+void signUpSeccess() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("ลงทะเบียนสำเร็จ"),
+            content: Text(
+                "กรุณา login เพื่อเข้าใช้ระบบ"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("ตกลง"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _onSignInButtonPress();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   void invalidPassword() {

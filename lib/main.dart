@@ -4,6 +4,7 @@ import 'LoginPage.dart';
 import 'SplashScreen.dart';
 import 'RegisterPage.dart';
 import 'ReservedPage.dart';
+import 'NewHome.dart';
 import 'login/login_page.dart' as newlogin; 
 
 void main() {
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     LoginPage.tag: (context) => newlogin.LoginPage(),
     RegisterPage.tag: (context) => RegisterPage(),
+    LoginPagee.tag: (context) => LoginPagee(),
   };
   @override
   Widget build(BuildContext context) {
