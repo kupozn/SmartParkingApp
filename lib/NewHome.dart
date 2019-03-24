@@ -210,7 +210,7 @@ class _LoginPageState extends State<LoginPagee>
 
   Widget _buildSignIn(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 23.0),
+      padding: EdgeInsets.only(top: 25.0),
       child: Column(
         children: <Widget>[
           Stack(
@@ -224,33 +224,27 @@ class _LoginPageState extends State<LoginPagee>
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 child: Container(
-                  width: 300.0,
+                  width: 350.0,
                   height: 300.0,
-                  child: Column(
-                    children: <Widget>[
-                      // Scaffold(
-                      //   body: StreamBuilder(
-                      //     stream: Firestore.instance.collection('numPark').snapshots(),
-                      //     builder: (context, snapshot) {
-                      //       if (!snapshot.hasData)
-                      //         return CircularProgressIndicator();
-                      //         // return Text('Loading',
-                      //         //     style: TextStyle(fontSize: 30.0, color: Colors.black));
-                      //       return ListView.builder(
-                      //         itemExtent: 80.0,
-                      //         itemCount: snapshot.data.documents.length,
-                      //         itemBuilder: (context, index) =>
-                      //             buildListItemPark(context, snapshot.data.documents[index]),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-                    ],
-                  ),
+                  child: StreamBuilder(
+                          stream: Firestore.instance.collection('numPark').snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData)
+                              return CircularProgressIndicator();
+                              // return Text('Loading',
+                              //     style: TextStyle(fontSize: 30.0, color: Colors.black));
+                            return ListView.builder(
+                              itemExtent: 80.0,
+                              itemCount: snapshot.data.documents.length,
+                              itemBuilder: (context, index) =>
+                                  buildListItemPark(context, snapshot.data.documents[index]),
+                            );
+                          },
+                        ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 170.0),
+                margin: EdgeInsets.only(top: 20.0),
                 decoration: new BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
@@ -275,22 +269,22 @@ class _LoginPageState extends State<LoginPagee>
                       stops: [0.0, 1.0],
                       tileMode: TileMode.clamp),
                 ),
-                child: MaterialButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: ThemeBase.Colors.loginGradientEnd,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        " LOGIN ",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontFamily: "WorkSansBold"),
-                      ),
-                    ),
-                  ),
+                // child: MaterialButton(
+                //     highlightColor: Colors.transparent,
+                //     splashColor: ThemeBase.Colors.loginGradientEnd,
+                //     //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //     child: Padding(
+                //       padding: const EdgeInsets.symmetric(
+                //           vertical: 10.0, horizontal: 42.0),
+                //       child: Text(
+                //         " LOGIN ",
+                //         style: TextStyle(
+                //             color: Colors.white,
+                //             fontSize: 25.0,
+                //             fontFamily: "WorkSansBold"),
+                //       ),
+                //     ),
+                //   ),
               ),
             ],
           ),
@@ -306,7 +300,10 @@ class _LoginPageState extends State<LoginPagee>
         Expanded(
           child: Text(
             document.documentID,
-            style: Theme.of(context).textTheme.headline,
+            style: TextStyle(
+              fontSize: 16.0,
+              fontFamily: "WorkSansMedium"
+            ),
           ),
         ),
         Container(
@@ -316,7 +313,10 @@ class _LoginPageState extends State<LoginPagee>
           padding: const EdgeInsets.all(10.0),
           child: Text(
             document['count'].toString().padLeft(3, '0'),
-            style: Theme.of(context).textTheme.headline,
+            style: TextStyle(
+              fontSize: 16.0,
+              fontFamily: "WorkSansMedium"
+            ),
           ),
         ),
       ]),
