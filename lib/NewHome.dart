@@ -13,13 +13,13 @@ class LoginPagee extends StatefulWidget {
 
   static String tag = 'LoginPagee';
   @override
-  _LoginPageState createState() => new _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPagee>
     with SingleTickerProviderStateMixin {
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
 
@@ -27,8 +27,8 @@ class _LoginPageState extends State<LoginPagee>
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
 
-  TextEditingController userNameController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
+  TextEditingController userNameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPagee>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overscroll) {
@@ -64,8 +64,8 @@ class _LoginPageState extends State<LoginPagee>
                 height: MediaQuery.of(context).size.height >= 600.0
                     ? MediaQuery.of(context).size.height
                     : 600.0,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                       colors: [
                         ThemeBase.Colors.loginGradientStart,
                         ThemeBase.Colors.loginGradientEnd
@@ -96,14 +96,14 @@ class _LoginPageState extends State<LoginPagee>
                           }
                         },
                         children: <Widget>[
-                          new Padding(
+                          Padding(
                             padding: EdgeInsets.only(top: 200.0),
                             child: ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
                             child: _buildSignIn(context),
                             ),
                           ),
-                          new ConstrainedBox(
+                          ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
                             child: _buildSignUp(context),
                           ),
@@ -144,10 +144,10 @@ class _LoginPageState extends State<LoginPagee>
   }
 //Login Action
   void showInSnackBar(String value) async{
-    FocusScope.of(context).requestFocus(new FocusNode());
+    FocusScope.of(context).requestFocus(FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
         value,
         textAlign: TextAlign.center,
         style: TextStyle(
@@ -245,7 +245,7 @@ class _LoginPageState extends State<LoginPagee>
               ),
               Container(
                 margin: EdgeInsets.only(top: 20.0),
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
@@ -259,7 +259,7 @@ class _LoginPageState extends State<LoginPagee>
                       blurRadius: 20.0,
                     ),
                   ],
-                  gradient: new LinearGradient(
+                  gradient: LinearGradient(
                       colors: [
                         ThemeBase.Colors.loginGradientEnd,
                         ThemeBase.Colors.loginGradientStart
@@ -342,8 +342,8 @@ class _LoginPageState extends State<LoginPagee>
             } else {
               // return object of type AlertDialog
               return AlertDialog(
-                title: new Text("ยืนยันนการจองที่จอด"),
-                content: new Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
+                title: Text("ยืนยันนการจองที่จอด"),
+                content: Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
                 actions: <Widget>[
                   // usually buttons at the bottom of the dialog
                   FlatButton(
@@ -393,7 +393,6 @@ class _LoginPageState extends State<LoginPagee>
                         child: TextField(
                           focusNode: myFocusNodeEmailLogin,
                           controller: userNameController,
-                          
                           style: TextStyle(
                               fontFamily: "WorkSansSemiBold",
                               fontSize: 16.0,
@@ -454,7 +453,7 @@ class _LoginPageState extends State<LoginPagee>
               ),
               Container(
                 margin: EdgeInsets.only(top: 170.0),
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
@@ -468,7 +467,7 @@ class _LoginPageState extends State<LoginPagee>
                       blurRadius: 20.0,
                     ),
                   ],
-                  gradient: new LinearGradient(
+                  gradient: LinearGradient(
                       colors: [
                         ThemeBase.Colors.loginGradientEnd,
                         ThemeBase.Colors.loginGradientStart
@@ -504,7 +503,7 @@ class _LoginPageState extends State<LoginPagee>
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                    gradient: new LinearGradient(
+                    gradient: LinearGradient(
                         colors: [
                           Colors.white10,
                           Colors.white,
@@ -529,7 +528,7 @@ class _LoginPageState extends State<LoginPagee>
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    gradient: new LinearGradient(
+                    gradient: LinearGradient(
                         colors: [
                           Colors.white,
                           Colors.white10,
@@ -554,11 +553,11 @@ class _LoginPageState extends State<LoginPagee>
                   onTap: () => showInSnackBar("Facebook button pressed"),
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
-                    child: new Icon(
+                    child: Icon(
                       FontAwesomeIcons.facebookF,
                       color: Color(0xFF0084ff),
                     ),
@@ -571,11 +570,11 @@ class _LoginPageState extends State<LoginPagee>
                   onTap: () => showInSnackBar("Google button pressed"),
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
-                    child: new Icon(
+                    child: Icon(
                       FontAwesomeIcons.google,
                       color: Color(0xFF0084ff),
                     ),

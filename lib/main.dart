@@ -5,7 +5,7 @@ import 'SplashScreen.dart';
 import 'RegisterPage.dart';
 import 'ReservedPage.dart';
 import 'NewHome.dart';
-import 'login/login_page.dart' as newlogin; 
+import 'login/login_page.dart' as newlogin;
 
 void main() {
   runApp(MyApp());
