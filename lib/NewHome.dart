@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePagee>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overscroll) {
@@ -59,8 +59,8 @@ class _HomePageState extends State<HomePagee>
                 height: MediaQuery.of(context).size.height >= 600.0
                     ? MediaQuery.of(context).size.height
                     : 600.0,
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                       colors: [
                         ThemeBase.Colors.loginGradientStart,
                         ThemeBase.Colors.loginGradientEnd
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePagee>
                             child: _buildmenu(context),
                             ),
                           ),
-                          new ConstrainedBox(
+                          ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
                             child: _buildprofile(context),
                           ),

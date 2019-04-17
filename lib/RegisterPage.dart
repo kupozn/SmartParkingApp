@@ -74,11 +74,11 @@ class _RegisterPageState extends State<RegisterPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("การลงทะเบียนสำเร็จ"),
-          content: new Text("การลงทะเบียนสำเร็จ กดปุ่มตกลงเพื่อไปหน้าเข้าสู่ระบบ"),
+          title: Text("การลงทะเบียนสำเร็จ"),
+          content: Text("การลงทะเบียนสำเร็จ กดปุ่มตกลงเพื่อไปหน้าเข้าสู่ระบบ"),
           actions: <Widget>[
-            new FlatButton(
-              child: new Text("ตกลง"),
+            FlatButton(
+              child: Text("ตกลง"),
               onPressed: () {Navigator.of(context).pushNamed(LoginPage.tag);;
               },
             ),
