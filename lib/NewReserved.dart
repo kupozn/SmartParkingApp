@@ -3,35 +3,45 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smart_parking/login/theme.dart' as ThemeBase;
 import 'package:smart_parking/login/bubble_indication_painter.dart';
+import 'package:random_string/random_string.dart' as random;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smart_parking/Home.dart';
+import 'package:smart_parking/ReservedPage.dart';
 import 'login/login_page.dart'; 
-import 'NewReserved.dart';
+import 'qrcode.dart';
+import 'NewHome.dart';
 
-class HomePagee extends StatefulWidget {
+class ReservedPagee extends StatefulWidget {
 
   final String userName;
   final String userkey;
   final String status;
+  final String place;
+  final Duration time;
 
-  HomePagee({Key key, @required this.userName, this.userkey, this.status})
+  ReservedPagee({Key key, @required this.userName, this.userkey, this.status, this.place, this.time})
       : super(key: key);
 
-  static String tag = 'HomePagee';
+  static String tag = 'ReservedPagee';
   @override
-  _HomePageState createState() => new _HomePageState(userName, userkey, status);
+  _ReservedPageState createState() => new _ReservedPageState(userName, userkey, status, place, time);
 }
 
-class _HomePageState extends State<HomePagee>
+class _ReservedPageState extends State<ReservedPagee>
     with SingleTickerProviderStateMixin {
-  _HomePageState(String userName, String userkey, String status) {
+  _ReservedPageState(String userName, String userkey, String status, String place, var time) {
     this.userName = userName;
     this.userkey = userkey;
     this.status = status;
+    this.place = place;
+    this.time = time;
   }
 
   String userName;
   String userkey;
   String status;
+  String place;
+  Duration time;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   PageController _pageController;
@@ -40,13 +50,17 @@ class _HomePageState extends State<HomePagee>
   Color right = Colors.white;
 
   var snapshots;
-  var place;
-  var selectPlace;
-  bool chkSelect = false;
   bool isValidUser = false;
+
+  AnimationController controller;
+  String get timerString {
+    Duration duration = controller.duration * controller.value;
+    return '       ${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context) {
+    controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
     return new Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
@@ -92,22 +106,22 @@ class _HomePageState extends State<HomePagee>
                         },
                         children: <Widget>[
                           new Padding(
-                            padding: EdgeInsets.only(top: 280.0),
+                            padding: EdgeInsets.only(top: 50.0),
                             child: ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildmenu(context),
+                            child: _buildProfile(context),
                             ),
                           ),
                           new ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildprofile(context),
+                            child: _buildSignUp(context),
                           ),
                         ],
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 10.0),
-                      child: _buildMenuBar(context),
+                      child: _buildCode(context),
                     ),
                   ],
                 ),
@@ -126,7 +140,10 @@ class _HomePageState extends State<HomePagee>
   @override
   void initState() {
     super.initState();
-
+    controller = AnimationController(
+      vsync: this,
+      duration: Duration(minutes: time.inMinutes, seconds: time.inSeconds % 60),
+    );
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -135,7 +152,7 @@ class _HomePageState extends State<HomePagee>
     _pageController = PageController();
   }
 
-  Widget _buildMenuBar(BuildContext context) {
+  Widget _buildCode(BuildContext context) {
     return Container(
       // padding: EdgeInsets.only(top: 100.0),
       width: 420.0,
@@ -184,8 +201,8 @@ class _HomePageState extends State<HomePagee>
     );
   }
 
-  Widget _buildmenu(BuildContext context) {
-    this.chkSelect = false;
+  Widget _buildProfile(BuildContext context) {
+    controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
     return Container(
       padding: EdgeInsets.only(top: 10.0),
       child: Column(
@@ -202,26 +219,90 @@ class _HomePageState extends State<HomePagee>
                 ),
                 child: Container(
                   width: 350.0,
-                  height: 250.0,
-                  child: StreamBuilder(
-                          stream: Firestore.instance.collection('numPark').snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData)
-                              return CircularProgressIndicator();
-                              // return Text('Loading',
-                              //     style: TextStyle(fontSize: 30.0, color: Colors.black));
-                            return ListView.builder(
-                              itemExtent: 80.0,
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (context, index) =>
-                                  buildListItemPark(context, snapshot.data.documents[index]),
-                            );
-                          },
+                  height: 530.0,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(padding: EdgeInsets.only(top: 20.0),
+                        child: QrImage(
+                          data: "$userkey",
+                          size: 250.0,
+                        )
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 30.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              FontAwesomeIcons.user,
+                              color: Colors.black,
+                              size: 22.0,
+                            ),
+                            Text('       $userName', style: TextStyle(
+                                fontFamily: "WorkSansSemiBold", fontSize: 20.0
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
+                      Container(
+                        width: 250.0,
+                        height: 1.0,
+                        color: Colors.grey[400],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              FontAwesomeIcons.car,
+                              color: Colors.black,
+                              size: 22.0,
+                            ),
+                            AnimatedBuilder(
+                            animation: controller,
+                            builder: (BuildContext context, Widget child) {
+                              return Text(
+                                '       $place',
+                                style: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 20.0, color: Colors.black),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: 250.0,
+                        height: 1.0,
+                        color: Colors.grey[400],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              FontAwesomeIcons.clock,
+                              color: Colors.black,
+                              size: 22.0,
+                            ),
+                            AnimatedBuilder(
+                            animation: controller,
+                            builder: (BuildContext context, Widget child) {
+                              return Text(
+                                timerString,
+                                style: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 20.0, color: Colors.black),
+                              );
+                            }),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 250.0),
+                padding: EdgeInsets.only(top: 480.0),
                 child : Container(
                   margin: EdgeInsets.only(top: 20.0),
                   decoration: new BoxDecoration(
@@ -256,14 +337,14 @@ class _HomePageState extends State<HomePagee>
                       padding: const EdgeInsets.symmetric(
                           vertical: 10.0, horizontal: 42.0),
                       child: Text(
-                        "RESERVE",
+                        "CANCEL",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 25.0,
                             fontFamily: "WorkSansBold"),
                       ),
                     ),
-                    onPressed: () => reserveButton(this.selectPlace),
+                    onPressed: () => cancleQueue(),
                   ),
                 ),
               ),
@@ -273,41 +354,8 @@ class _HomePageState extends State<HomePagee>
       ),
     );
   }
-
-  Widget buildListItemPark(BuildContext context, DocumentSnapshot document) {
-    /************************LIST ITEM IN HOME PAGE ***********************************/
-    return ListTile(
-      title: Row(children: [
-        Expanded(
-          child: Text(
-            document.documentID,
-            style: TextStyle(
-              fontSize: 22.0,
-              fontFamily: "WorkSansMedium"
-            ),
-          ),
-        ),
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.pinkAccent,
-          ),
-          padding: const EdgeInsets.all(10.0),
-          child: Text(
-            document['count'].toString().padLeft(3, '0'),
-            style: TextStyle(
-              fontSize: 22.0,
-              fontFamily: "WorkSansMedium"
-            ),
-          ),
-        ),
-      ]),
-      onTap: () {
-        changePlace(document);
-      },
-    );
-  }
-
-  Widget _buildprofile(BuildContext context) {
+  
+  Widget _buildSignUp(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 300.0),
       child: Column(
@@ -401,9 +449,7 @@ class _HomePageState extends State<HomePagee>
                   child: MaterialButton(
                     highlightColor: Colors.transparent,
                     splashColor: ThemeBase.Colors.loginGradientEnd,
-                    onPressed: ()  {
-                      signOut();
-                    },
+                    onPressed: () =>  signOut(),
                     //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -436,151 +482,6 @@ class _HomePageState extends State<HomePagee>
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
-  changeStatus(DocumentSnapshot document) async {
-    var place = document.documentID;
-    var now = DateTime.now();
-    DocumentSnapshot data = await Firestore.instance
-        .collection('Username')
-        .document('$userName')
-        .get();
-    status = data['status'];
-    print(status);
-    if (status == 'Not Reserve') {
-      document.reference.updateData({
-        'count':
-            (document['count'] > 0 ? document['count'] - 1 : document['count'])
-      });
-      Firestore.instance
-          .collection('Username')
-          .document('$userName')
-          .updateData({'status': "Reserved", 'place': "$place"});
-      Firestore.instance
-          .collection('Reserved Data')
-          .document('$userkey')
-          .setData({'status': 'Not Active', 'place': "$place", 'time': now});
-      Firestore.instance
-          .collection('ScanerTest')
-          .document('$userkey')
-          .setData({'place': "$place"});
-      DocumentSnapshot dataTime = await Firestore.instance
-          .collection('Reserved Data')
-          .document('$userkey')
-          .get();
-      DateTime time = dataTime['time'];
-      DateTime test = DateTime.fromMillisecondsSinceEpoch(
-          time.millisecondsSinceEpoch + (1000 * 60 * 1));
-      var timediff = test.difference(now);
-      print('timediff  $timediff');
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ReservedPagee(
-                    userName: '$userName',
-                    userkey: '$userkey',
-                    status: '$status',
-                    place: '$place',
-                    time: timediff,
-                  )));
-    } else {
-      alreadyReserve();
-    }
-  }
-
-  alreadyReserve() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("เกิดข้อผิดพลาด"),
-          content: Text(
-              "ไม่สามารถจองได้ เนื่องจากบัญชีของท่านได้ใช้งานการจองไปแล้วกรุณาเข้าสู่ระบบอีกครั้งเพื่อไปหน้าการจอง"),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            FlatButton(
-              child: Text("ตกลง"),
-              onPressed: () {
-              //   Navigator.of(context).pushNamed(newlogin.LoginPage.tag);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  changePlace(DocumentSnapshot document) {
-    this.selectPlace = document;
-    this.chkSelect = true;
-    
-  }
-
-  reserveButton(DocumentSnapshot document) {
-    if(this.chkSelect){
-      showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        if (document['count'] == 0) {
-          return AlertDialog(
-            title: Text("ไม่สามารถจองที่จอดได้"),
-            content: Text(
-                "ที่จอดที่นี่ได้ถูกจองเต็มจำนวนแล้ว กรุณาเลือกที่จอดที่อื่น"),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                child: Text("ตกลง"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-          }else {
-          // return object of type AlertDialog
-            return AlertDialog(
-              title: new Text("ยืนยันนการจองที่จอด"),
-              content: new Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: Text("ยกเลิก"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                FlatButton(
-                  child: Text("ตกลง"),
-                  onPressed: () {
-                    changeStatus(document);
-                  },
-                ),
-              ],
-            );
-          }
-        }
-      );
-    }else{
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("กรุณาเลือกสถานที่จอด"),
-            content: Text(
-                "กรุณาเลือกสถานที่จอดก่อนทำการกดจอง"),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                child: Text("ตกลง"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        }
-      );
-    }
-  }
-
   void signOut() {
     showDialog(
       context: context,
@@ -609,6 +510,93 @@ class _HomePageState extends State<HomePagee>
               context,
               MaterialPageRoute(
                   builder: (context) => LoginPage()));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  cancleQueue() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("ยืนยันการยกเลิกการจองคิว"),
+            content: Text(
+                "การยกเลิกการจองคิวจะไม่สามารถเรียกคืนคิวได้ ยืนยันที่ยกเลิกการจอง"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("ยกเลิก"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("ตกลง"),
+                onPressed: () {
+                  routeHomepage();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  routeHomepage() async {
+    var _status;
+    var numm;
+    var data;
+    DocumentSnapshot snapshot = await Firestore.instance.collection('numPark').document('$place').get();
+    data = snapshot;
+    numm = data['count'];
+    DocumentSnapshot dataStatus = await Firestore.instance
+        .collection('Username')
+        .document('$userName')
+        .get();
+    _status = dataStatus['status'];
+    print(status);
+    if (_status != 'Not Reserve') {
+      await Firestore.instance
+          .collection('numPark')
+          .document('$place')
+          .updateData({'count': numm + 1});
+      await Firestore.instance
+          .collection('Username')
+          .document('$userName')
+          .updateData({'status': "Not Reserve", 'place': ""});
+      await Firestore.instance
+          .collection('ScanerTest')
+          .document('$userkey')
+          .delete();
+      status = 'Not Reserve';
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePagee(
+                  userName: '$userName',
+                  userkey: '$userkey',
+                  status: '$status')));
+    } else {
+      sessionOut();
+    }
+  }
+
+  sessionOut() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("เกิดข้อผิดพลาด"),
+          content: Text(
+              "การจองของท่านถูกยกเลิกแล้ว อาจเกิดจากการเข้าระบบจากที่อื่น กรุณาเข้าระบบใหม่อีกครั้งเพื่อเริ่มต้นการใช้งาน"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            FlatButton(
+              child: Text("ตกลง"),
+              onPressed: () {
+                Navigator.of(context).pushNamed(LoginPage.tag);
               },
             ),
           ],

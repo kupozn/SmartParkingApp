@@ -5,10 +5,8 @@ import 'package:smart_parking/login/theme.dart' as Theme;
 import 'package:smart_parking/login/bubble_indication_painter.dart';
 import 'package:random_string/random_string.dart' as random;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:smart_parking/Home.dart';
-import 'package:smart_parking/ReservedPage.dart';
 import 'package:smart_parking/NewHome.dart';
-
+import 'package:smart_parking/NewReserved.dart';
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -640,7 +638,7 @@ class _LoginPageState extends State<LoginPage>
               Padding(
                 padding: EdgeInsets.only(top: 10.0, right: 40.0),
                 child: GestureDetector(
-                  onTap: () => showInSnackBar("Facebook button pressed"),
+                  onTap: () => showInSnackBar("Sign in with Facebook is not avalable"),
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
                     decoration: new BoxDecoration(
@@ -657,7 +655,7 @@ class _LoginPageState extends State<LoginPage>
               Padding(
                 padding: EdgeInsets.only(top: 10.0),
                 child: GestureDetector(
-                  onTap: () => showInSnackBar("Google button pressed"),
+                  onTap: () => showInSnackBar("Sign in with Google is not avalable"),
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
                     decoration: new BoxDecoration(
@@ -747,7 +745,7 @@ class _LoginPageState extends State<LoginPage>
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ReservedPage(
+                    builder: (context) => ReservedPagee(
                           userName: '$username',
                           userkey: '$_userkey',
                           status: '$_status',
@@ -776,15 +774,15 @@ class _LoginPageState extends State<LoginPage>
             );
           }
         } else {
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //         builder: (context) => HomePage(
-          //               userName: '$username',
-          //               userkey: '$_userkey',
-          //               status: '$_status',
-          //             )));
-          Navigator.of(context).pushNamed(LoginPagee.tag);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePagee(
+                        userName: '$username',
+                        userkey: '$_userkey',
+                        status: '$_status',
+                      )));
+          // Navigator.of(context).pushNamed(HomePagee.tag);
         }
       } else {
         invalidPassword();
@@ -835,7 +833,7 @@ class _LoginPageState extends State<LoginPage>
     //               userkey: '$_userkey',
     //               status: '$_status',
     //             )));
-    Navigator.of(context).pushNamed(LoginPagee.tag);
+    Navigator.of(context).pushNamed(HomePagee.tag);
     
   }
 
