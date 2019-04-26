@@ -1,141 +1,141 @@
-import 'package:flutter/material.dart';
-import 'Home.dart';
-import 'LoginPage.dart';
-import 'SplashScreen.dart';
-import 'RegisterPage.dart';
-import 'ReservedPage.dart';
-import 'NewHome.dart';
-import 'login/login_page.dart' as newlogin;
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  noSuchMethod(Invocation i) => super.noSuchMethod(i);
-  final routes = <String, WidgetBuilder>{
-    LoginPage.tag: (context) => newlogin.LoginPage(),
-    RegisterPage.tag: (context) => RegisterPage(),
-    HomePagee.tag: (context) => HomePagee(),
-  };
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Smart-Parking",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Nunito',
-      ),
-      home: newlogin.LoginPage(),
-      routes: routes,
-    );
-  }
-}
-
-// import 'dart:async';
-
 // import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'Home.dart';
+// import 'LoginPage.dart';
+// import 'SplashScreen.dart';
+// import 'RegisterPage.dart';
+// import 'ReservedPage.dart';
+// import 'NewHome.dart';
+// import 'login/login_page.dart' as newlogin;
 
-// void main() => runApp(MyApp());
-
-// class MyApp extends StatefulWidget {
-//   @override
-//   _MyAppState createState() => _MyAppState();
+// void main() {
+//   runApp(MyApp());
 // }
 
-// class _MyAppState extends State<MyApp> {
-//   Completer<GoogleMapController> _controller = Completer();
-
-//   static const LatLng _center = const LatLng(45.521563, -122.677433);
-
-//   final Set<Marker> _markers = {};
-
-//   LatLng _lastMapPosition = _center;
-
-//   MapType _currentMapType = MapType.normal;
-
-//   void _onMapTypeButtonPressed() {
-//     setState(() {
-//       _currentMapType = _currentMapType == MapType.normal
-//           ? MapType.satellite
-//           : MapType.normal;
-//     });
-//   }
-
-//   void _onAddMarkerButtonPressed() {
-//     setState(() {
-//       _markers.add(Marker(
-//         // This marker id can be anything that uniquely identifies each marker.
-//         markerId: MarkerId(_lastMapPosition.toString()),
-//         position: _lastMapPosition,
-//         infoWindow: InfoWindow(
-//           title: 'Really cool place',
-//           snippet: '5 Star Rating',
-//         ),
-//         icon: BitmapDescriptor.defaultMarker,
-//       ));
-//     });
-//   }
-
-//   void _onCameraMove(CameraPosition position) {
-//     _lastMapPosition = position.target;
-//   }
-
-//   void _onMapCreated(GoogleMapController controller) {
-//     _controller.complete(controller);
-//   }
-
+// class MyApp extends StatelessWidget {
+//   noSuchMethod(Invocation i) => super.noSuchMethod(i);
+//   final routes = <String, WidgetBuilder>{
+//     LoginPage.tag: (context) => newlogin.LoginPage(),
+//     RegisterPage.tag: (context) => RegisterPage(),
+//     HomePagee.tag: (context) => HomePagee(),
+//   };
 //   @override
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Maps Sample App'),
-//           backgroundColor: Colors.green[700],
-//         ),
-//         body: Stack(
-//           children: <Widget>[
-//             GoogleMap(
-//               onMapCreated: _onMapCreated,
-//               initialCameraPosition: CameraPosition(
-//                 target: _center,
-//                 zoom: 11.0,
-//               ),
-//               mapType: _currentMapType,
-//               markers: _markers,
-//               onCameraMove: _onCameraMove,
-//             ),
-//             Padding(
-//               padding: const EdgeInsets.all(16.0),
-//               child: Align(
-//                 alignment: Alignment.topRight,
-//                 child: Column(
-//                   children: <Widget> [
-//                     FloatingActionButton(
-//                       onPressed: _onMapTypeButtonPressed,
-//                       materialTapTargetSize: MaterialTapTargetSize.padded,
-//                       backgroundColor: Colors.green,
-//                       child: const Icon(Icons.map, size: 36.0),
-//                     ),
-//                     SizedBox(height: 16.0),
-//                     FloatingActionButton(
-//                       onPressed: _onAddMarkerButtonPressed,
-//                       materialTapTargetSize: MaterialTapTargetSize.padded,
-//                       backgroundColor: Colors.green,
-//                       child: const Icon(Icons.add_location, size: 36.0),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
+//       title: "Smart-Parking",
+//       debugShowCheckedModeBanner: false,
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//         fontFamily: 'Nunito',
 //       ),
+//       home: newlogin.LoginPage(),
+//       routes: routes,
 //     );
 //   }
 // }
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Completer<GoogleMapController> _controller = Completer();
+
+  static const LatLng _center = const LatLng(45.521563, -122.677433);
+
+  final Set<Marker> _markers = {};
+
+  LatLng _lastMapPosition = _center;
+
+  MapType _currentMapType = MapType.normal;
+
+  void _onMapTypeButtonPressed() {
+    setState(() {
+      _currentMapType = _currentMapType == MapType.normal
+          ? MapType.satellite
+          : MapType.normal;
+    });
+  }
+
+  void _onAddMarkerButtonPressed() {
+    setState(() {
+      _markers.add(Marker(
+        // This marker id can be anything that uniquely identifies each marker.
+        markerId: MarkerId(_lastMapPosition.toString()),
+        position: _lastMapPosition,
+        infoWindow: InfoWindow(
+          title: 'Really cool place',
+          snippet: '5 Star Rating',
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+    });
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    _lastMapPosition = position.target;
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _controller.complete(controller);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Maps Sample App'),
+          backgroundColor: Colors.green[700],
+        ),
+        body: Stack(
+          children: <Widget>[
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _center,
+                zoom: 11.0,
+              ),
+              mapType: _currentMapType,
+              markers: _markers,
+              onCameraMove: _onCameraMove,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Column(
+                  children: <Widget> [
+                    FloatingActionButton(
+                      onPressed: _onMapTypeButtonPressed,
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      backgroundColor: Colors.green,
+                      child: const Icon(Icons.map, size: 36.0),
+                    ),
+                    SizedBox(height: 16.0),
+                    FloatingActionButton(
+                      onPressed: _onAddMarkerButtonPressed,
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      backgroundColor: Colors.green,
+                      child: const Icon(Icons.add_location, size: 36.0),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // import 'dart:async';
 
@@ -204,5 +204,59 @@ class MyApp extends StatelessWidget {
 //       ),
 //       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 //     );
+//   }
+// }
+
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
+
+// void main() => runApp(MaterialApp(home: QRViewExample()));
+
+// class QRViewExample extends StatefulWidget {
+//   const QRViewExample({
+//     Key key,
+//   }) : super(key: key);
+
+//   @override
+//   State<StatefulWidget> createState() => _QRViewExampleState();
+// }
+
+// class _QRViewExampleState extends State<QRViewExample> {
+//   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+//   var qrText = "";
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Column(
+//         children: <Widget>[
+//           Expanded(
+//             child: QRView(
+//               key: qrKey,
+//               onQRViewCreated: _onQRViewCreated,
+//             ),
+//             flex: 4,
+//           ),
+//           Expanded(
+//             child: Text("This is the result of scan: $qrText"),
+//             flex: 1,
+//           )
+//         ],
+//       ),
+//     );
+//   }
+
+//   void _onQRViewCreated(QRViewController controller) {
+//     final channel = controller.channel;
+//     controller.init(qrKey);
+//     channel.setMethodCallHandler((MethodCall call) async {
+//       switch (call.method) {
+//         case "onRecognizeQR":
+//           dynamic arguments = call.arguments;
+//           setState(() {
+//             qrText = arguments.toString();
+//           });
+//       }
+//     });
 //   }
 // }
