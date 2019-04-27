@@ -121,7 +121,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("Count Down",
+                  Text('Count Down',
                       style: TextStyle(fontSize: 30.0, color: Colors.black)),
                   SizedBox(
                     height: 10.0,
@@ -160,20 +160,20 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("ยืนยันการยกเลิกการจองคิว"),
+            title: Text("Cancllation Confirm?"),
             content: Text(
                 "การยกเลิกการจองคิวจะไม่สามารถเรียกคืนคิวได้ ยืนยันที่ยกเลิกการจอง"),
             actions: <Widget>[
               FlatButton(
-                child: Text("ยกเลิก"),
+                child: Text('Dismiss'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
               FlatButton(
-                child: Text("ตกลง"),
+                child: Text('Proceed'),
                 onPressed: () {
-                  routeHomepage();
+                  routeHomePage();
                 },
               ),
             ],
@@ -181,7 +181,7 @@ class _ReservedPage extends State<ReservedPage> with TickerProviderStateMixin {
         });
   }
 
-  routeHomepage() async {
+  void routeHomePage() async {
     var _status;
     var numm;
     var data;

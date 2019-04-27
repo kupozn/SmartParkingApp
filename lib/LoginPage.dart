@@ -97,13 +97,12 @@ class _LoginPageState extends State<LoginPage> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text("หมดเวลา"),
-                  content: Text(
-                      "การจองของท่านได้ถูกยกเลิก เนื่องจากโค้ดหมดอายุการใช้งาน"),
+                  title: Text('Oops'),
+                  content: Text('Session Expired'),
                   actions: <Widget>[
                     // usually buttons at the bottom of the dialog
                     FlatButton(
-                      child: Text("ตกลง"),
+                      child: Text('ตกลง'),
                       onPressed: () {
                         timeOut();
                       },
@@ -136,12 +135,11 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("เกิดข้อผิดพลาด"),
-            content: Text(
-                "ชื่อผู้ใช้นี้ไม่มีอยู่ในระบบ กรุณาตรวจสอบชื่อผู้ใช้งานให้ถูกต้อง"),
+            title: Text('Error!'),
+            content: Text("Can't Not Find associated users"),
             actions: <Widget>[
               FlatButton(
-                child: Text("ตกลง"),
+                child: Text('Dismiss'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -163,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
     Firestore.instance
         .collection('Username')
         .document('$_userName')
-        .updateData({'userkey': "", 'status': "Not Reserve", 'place': ''});
+        .updateData({'userkey': null, 'status': 'Not Reserve', 'place': ''});
     Navigator.push(
         context,
         MaterialPageRoute(
