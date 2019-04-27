@@ -69,6 +69,25 @@ class _RegisterPageState extends State<RegisterPage> {
         });
   }
 
+  loginSuccess(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("การลงทะเบียนสำเร็จ"),
+          content: Text("การลงทะเบียนสำเร็จ กดปุ่มตกลงเพื่อไปหน้าเข้าสู่ระบบ"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("ตกลง"),
+              onPressed: () {Navigator.of(context).pushNamed(LoginPage.tag);;
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
   void moveToLogin() {
     formkey.currentState.reset();
     setState(() {
@@ -100,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(
                 height: 30.0,
               ),
-              buildInputEmail('Email', false),
+              buildInputEmail('Username', false),
               SizedBox(
                 height: 10.0,
               ),

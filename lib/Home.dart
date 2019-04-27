@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       bottomNavigationBar: buildButtomBar(),
       backgroundColor: Colors.limeAccent,
       body: StreamBuilder(
-        stream: Firestore.instance.collection('Parking').snapshots(),
+        stream: Firestore.instance.collection('numPark').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Text('Loading',
@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               // return object of type AlertDialog
               return AlertDialog(
                 title: Text("ยืนยันนการจองที่จอด"),
-                content: Text("You can only reserve parking at once"),
+                content: Text("ท่านสามารถจองที่จอดได้เพียงครั้งละ 1 ที่เท่านั้น กดตกลงเพื่อยืนยันการจอง"),
                 actions: <Widget>[
                   // usually buttons at the bottom of the dialog
                   FlatButton(

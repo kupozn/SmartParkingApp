@@ -8,7 +8,7 @@ import 'ReservedPage.dart';
 class LoginPage extends StatefulWidget {
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
 
-  static String tag = 'LoginPage';
+  static String tag = 'LoginPageold';
   @override
   State<StatefulWidget> createState() => _LoginPageState();
 }
@@ -225,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 30.0,
               ),
-              buildInputEmail('Email', false),
+              buildInputEmail('Username', false),
               SizedBox(
                 height: 10.0,
               ),
