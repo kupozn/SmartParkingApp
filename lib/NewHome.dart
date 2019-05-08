@@ -6,13 +6,14 @@ import 'package:smart_parking/login/bubble_indication_painter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login/login_page.dart'; 
 import 'NewReserved.dart';
+import 'dart:async';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class HomePagee extends StatefulWidget {
 
   final String userName;
   final String userkey;
   final String status;
-
   HomePagee({Key key, @required this.userName, this.userkey, this.status})
       : super(key: key);
 
@@ -44,6 +45,14 @@ class _HomePageState extends State<HomePagee>
   var selectPlace;
   bool chkSelect = false;
   bool isValidUser = false;
+
+  Completer<GoogleMapController> _controller = Completer();
+  GoogleMapController mapController;
+
+  static const LatLng _center = const LatLng(13.730718, 100.781385);
+   Set<Marker> _markers = {};
+  LatLng _lastMapPosition = _center;
+  MapType _currentMapType = MapType.normal;
 
   @override
   Widget build(BuildContext context) {
@@ -82,17 +91,19 @@ class _HomePageState extends State<HomePagee>
                             setState(() {
                               right = Colors.white;
                               left = Colors.black;
+                              this.chkSelect = false;
                             });
                           } else if (i == 1) {
                             setState(() {
                               right = Colors.black;
                               left = Colors.white;
+                              this.chkSelect = false;
                             });
                           }
                         },
                         children: <Widget>[
                           new Padding(
-                            padding: EdgeInsets.only(top: 280.0),
+                            padding: EdgeInsets.only(top: 10.0),
                             child: ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
                             child: _buildmenu(context),
@@ -185,7 +196,6 @@ class _HomePageState extends State<HomePagee>
   }
 
   Widget _buildmenu(BuildContext context) {
-    this.chkSelect = false;
     return Container(
       padding: EdgeInsets.only(top: 10.0),
       child: Column(
@@ -194,34 +204,67 @@ class _HomePageState extends State<HomePagee>
             alignment: Alignment.topCenter,
             overflow: Overflow.visible,
             children: <Widget>[
-              Card(
-                elevation: 2.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+              Container(
+                padding: EdgeInsets.only(top: 10.0),
+                child: Column(
+                  children: <Widget>[
+                    Stack(
+                      alignment: Alignment.topCenter,
+                      overflow: Overflow.visible,
+                      children: <Widget>[
+                        Container(
+                          width: 350.0,
+                          height: 250.0,
+                          child: Stack(
+                            children: <Widget>[
+                              GoogleMap(
+                                onMapCreated: (GoogleMapController controller) {
+                                  mapController = controller;
+                                },
+                                initialCameraPosition: CameraPosition(
+                                  target: _center,
+                                  zoom: 11.0,
+                                ),
+                                mapType: _currentMapType,
+                                markers: _markers,
+                                onCameraMove: _onCameraMove,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
-                child: Container(
-                  width: 350.0,
-                  height: 250.0,
-                  child: StreamBuilder(
-                          stream: Firestore.instance.collection('numPark').snapshots(),
-                          builder: (context, snapshot) {
-                            if (!snapshot.hasData)
-                              return CircularProgressIndicator();
-                              // return Text('Loading',
-                              //     style: TextStyle(fontSize: 30.0, color: Colors.black));
-                            return ListView.builder(
-                              itemExtent: 80.0,
-                              itemCount: snapshot.data.documents.length,
-                              itemBuilder: (context, index) =>
-                                  buildListItemPark(context, snapshot.data.documents[index]),
-                            );
-                          },
-                        ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 285.0),
+                child: Card(
+                elevation: 2.0,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Container(
+                    width: 350.0,
+                    height: 250.0,
+                    child: StreamBuilder(
+                      stream: Firestore.instance.collection('numPark').snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return Center(child :CircularProgressIndicator());
+                        return ListView.builder(
+                          itemExtent: 80.0,
+                          itemCount: snapshot.data.documents.length,
+                          itemBuilder: (context, index) =>
+                            buildListItemPark(context, snapshot.data.documents[index]),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 250.0),
+                padding: EdgeInsets.only(top: 530.0),
                 child : Container(
                   margin: EdgeInsets.only(top: 20.0),
                   decoration: new BoxDecoration(
@@ -303,6 +346,7 @@ class _HomePageState extends State<HomePagee>
       ]),
       onTap: () {
         changePlace(document);
+        _onAddMarkerButtonPressed(document.documentID, document['count'], document['lad'], document['long']);
       },
     );
   }
@@ -436,6 +480,31 @@ class _HomePageState extends State<HomePagee>
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
+  void _onAddMarkerButtonPressed(String name, var count, var lad, var long) {
+    this._markers = {};
+    setState(() {
+      this.chkSelect = true;
+      _markers.add(Marker(
+        // This marker id can be anything that uniquely identifies each marker.
+        markerId: MarkerId(_lastMapPosition.toString()),
+        position: LatLng(lad, long),
+        infoWindow: InfoWindow(
+          title: '$name',
+          snippet: 'Parking avalable $count slots.',
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+    });
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    _lastMapPosition = position.target;
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _controller.complete(controller);
+  }
+
   changeStatus(DocumentSnapshot document) async {
     var place = document.documentID;
     var now = DateTime.now();
@@ -468,7 +537,7 @@ class _HomePageState extends State<HomePagee>
           .get();
       DateTime time = dataTime['time'];
       DateTime test = DateTime.fromMillisecondsSinceEpoch(
-          time.millisecondsSinceEpoch + (1000 * 60 * 1));
+          time.millisecondsSinceEpoch + (1000 * 3600 * 1));
       var timediff = test.difference(now);
       print('timediff  $timediff');
       Navigator.push(
@@ -511,10 +580,20 @@ class _HomePageState extends State<HomePagee>
   changePlace(DocumentSnapshot document) {
     this.selectPlace = document;
     this.chkSelect = true;
-    
+    print(this.chkSelect);
+    var lad = document['lad'];
+    var long = document['long'];
+    var name = document.documentID;
+    mapController.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        LatLng(lad, long),
+        15.0, // Zoom factor
+      ),
+    );
   }
 
   reserveButton(DocumentSnapshot document) {
+    print(this.chkSelect);
     if(this.chkSelect){
       showDialog(
       context: context,

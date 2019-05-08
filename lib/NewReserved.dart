@@ -55,7 +55,7 @@ class _ReservedPageState extends State<ReservedPagee>
   AnimationController controller;
   String get timerString {
     Duration duration = controller.duration * controller.value;
-    return '       ${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    return '       ${(duration.inHours).toString().padLeft(2, '0')}:${(duration.inMinutes).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
   @override
@@ -502,10 +502,16 @@ class _ReservedPageState extends State<ReservedPagee>
               child: Text("ตกลง"),
               onPressed: () {
                 Firestore.instance
-                    .collection('Username')
-                    .document('$userName')
-                    .updateData(
-                        {'userkey': "", 'status': "Not Reserve", 'place': ''});
+                  .collection('Username')
+                  .document('$userName')
+                  .updateData(
+                      {'userkey': "", 'status': "Not Reserve", 'place': ''});
+                Firestore.instance
+                  .collection('Reserved Data')
+                  .document('$userkey')
+                  .setData({
+                'status': "Cancelled"
+                });
                 Navigator.push(
               context,
               MaterialPageRoute(
@@ -570,6 +576,12 @@ class _ReservedPageState extends State<ReservedPagee>
           .collection('ScanerTest')
           .document('$userkey')
           .delete();
+      await Firestore.instance
+          .collection('Reserved Data')
+          .document('$userkey')
+          .setData({
+        'status': "Cancelled"
+      });
       status = 'Not Reserve';
       Navigator.push(
           context,
