@@ -735,7 +735,7 @@ class _LoginPageState extends State<LoginPage>
           var timediff = test.difference(now);
           if (now.millisecondsSinceEpoch < test.millisecondsSinceEpoch ||
               ((now.millisecondsSinceEpoch > test.millisecondsSinceEpoch) &&
-                  dataStatus == 'Active')) { //Check timeout
+                  dataStatus == 'Activate')) { //Check timeout
             Navigator.push(
                 context,
                 MaterialPageRoute(

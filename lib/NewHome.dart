@@ -526,7 +526,7 @@ class _HomePageState extends State<HomePagee>
       Firestore.instance
           .collection('Reserved Data')
           .document('$userkey')
-          .setData({'status': 'Not Active', 'place': "$place", 'time': now});
+          .setData({'status': 'Not Active', 'place': "$place", 'time': now, 'user': '$userName'});
       Firestore.instance
           .collection('ScanerTest')
           .document('$userkey')
