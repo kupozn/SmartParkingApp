@@ -829,7 +829,6 @@ class _LoginPageState extends State<LoginPage>
         .document('$_userName')
         .updateData({'userkey': "", 'status': "Not Reserve", 'place': ''});
     Navigator.of(context).pushNamed(HomePagee.tag);
-    
   }
 
   void validateSignUp() async {

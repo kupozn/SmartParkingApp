@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smart_parking/login/theme.dart' as ThemeBase;
 import 'package:smart_parking/login/bubble_indication_painter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'login/login_page.dart'; 
+import 'login/login_page.dart';
 import 'NewReserved.dart';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePagee>
   GoogleMapController mapController;
 
   static const LatLng _center = const LatLng(13.730718, 100.781385);
-   Set<Marker> _markers = {};
+   Set<Marker> _markers;
   LatLng _lastMapPosition = _center;
   MapType _currentMapType = MapType.normal;
 
@@ -481,11 +481,10 @@ class _HomePageState extends State<HomePagee>
   }
 
   void _onAddMarkerButtonPressed(String name, var count, var lad, var long) {
-    this._markers = {};
+    this._markers;
     setState(() {
       this.chkSelect = true;
       _markers.add(Marker(
-        // This marker id can be anything that uniquely identifies each marker.
         markerId: MarkerId(_lastMapPosition.toString()),
         position: LatLng(lad, long),
         infoWindow: InfoWindow(
@@ -695,5 +694,4 @@ class _HomePageState extends State<HomePagee>
       },
     );
   }
-
 }
