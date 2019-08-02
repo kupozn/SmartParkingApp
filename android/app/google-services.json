@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:562445244265:android:2ee1565959a47acb",
+        "android_client_info": {
+          "package_name": "com.example.reader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "562445244265-qlq883teat56n0oljtld5kjv4ha1ddhk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-jPv_KhErWZ0ipmH71-NoocjbP-mQvDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562445244265-qlq883teat56n0oljtld5kjv4ha1ddhk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:562445244265:android:6f53474e878f5647",
         "android_client_info": {
           "package_name": "com.example.smartparking"
@@ -25,15 +54,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562445244265-qlq883teat56n0oljtld5kjv4ha1ddhk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

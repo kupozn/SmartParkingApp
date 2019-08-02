@@ -702,7 +702,6 @@ class _LoginPageState extends State<LoginPage>
   void getChannelName(String username, String password) async {
     var userData;
     var data;
-
     try {
       DocumentSnapshot snapshot = await Firestore.instance
           .collection('Username')
@@ -731,12 +730,12 @@ class _LoginPageState extends State<LoginPage>
           DateTime time = dataTime['time'];
           String dataStatus = dataTime['status'];
           DateTime test = DateTime.fromMillisecondsSinceEpoch(
-              time.millisecondsSinceEpoch + (1000 * 60 * 1));
+              time.millisecondsSinceEpoch + (1000 * 3600 * 1));
           var now = DateTime.now();
           var timediff = test.difference(now);
           if (now.millisecondsSinceEpoch < test.millisecondsSinceEpoch ||
               ((now.millisecondsSinceEpoch > test.millisecondsSinceEpoch) &&
-                  dataStatus == 'Active')) { //Check timeout
+                  dataStatus == 'Activate')) { //Check timeout
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -810,6 +809,9 @@ class _LoginPageState extends State<LoginPage>
   timeOut() async {
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('numPark').document('$place').get();
+    DocumentSnapshot userData = await Firestore.instance
+        .collection('Username')
+        .document('$_userName').get();
     var data = snapshot;
     var numm = data['count'];
     await Firestore.instance
@@ -817,19 +819,16 @@ class _LoginPageState extends State<LoginPage>
         .document('$place')
         .updateData({'count': numm + 1});
     Firestore.instance
+          .collection('Reserved Data')
+          .document('${userData['userkey']}')
+          .setData({
+        'status': "Cancelled"
+      });
+    Firestore.instance
         .collection('Username')
         .document('$_userName')
         .updateData({'userkey': "", 'status': "Not Reserve", 'place': ''});
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => HomePage(
-    //               userName: '$_userName',
-    //               userkey: '$_userkey',
-    //               status: '$_status',
-    //             )));
     Navigator.of(context).pushNamed(HomePagee.tag);
-    
   }
 
   void validateSignUp() async {

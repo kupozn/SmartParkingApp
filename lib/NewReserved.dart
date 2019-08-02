@@ -55,7 +55,7 @@ class _ReservedPageState extends State<ReservedPagee>
   AnimationController controller;
   String get timerString {
     Duration duration = controller.duration * controller.value;
-    return '       ${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    return '       ${(duration.inHours).toString().padLeft(2, '0')}:${(duration.inMinutes).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
   }
 
   @override
@@ -109,19 +109,19 @@ class _ReservedPageState extends State<ReservedPagee>
                             padding: EdgeInsets.only(top: 50.0),
                             child: ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildProfile(context),
+                            child: _buildCode(context),
                             ),
                           ),
                           new ConstrainedBox(
                             constraints: const BoxConstraints.expand(),
-                            child: _buildSignUp(context),
+                            child: _buildProfile(context),
                           ),
                         ],
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 10.0),
-                      child: _buildCode(context),
+                      child: _buildButton(context),
                     ),
                   ],
                 ),
@@ -152,7 +152,7 @@ class _ReservedPageState extends State<ReservedPagee>
     _pageController = PageController();
   }
 
-  Widget _buildCode(BuildContext context) {
+  Widget _buildButton(BuildContext context) {
     return Container(
       // padding: EdgeInsets.only(top: 100.0),
       width: 420.0,
@@ -201,7 +201,7 @@ class _ReservedPageState extends State<ReservedPagee>
     );
   }
 
-  Widget _buildProfile(BuildContext context) {
+  Widget _buildCode(BuildContext context) {
     controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);
     return Container(
       padding: EdgeInsets.only(top: 10.0),
@@ -355,7 +355,7 @@ class _ReservedPageState extends State<ReservedPagee>
     );
   }
   
-  Widget _buildSignUp(BuildContext context) {
+  Widget _buildProfile(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 300.0),
       child: Column(
@@ -502,10 +502,16 @@ class _ReservedPageState extends State<ReservedPagee>
               child: Text("ตกลง"),
               onPressed: () {
                 Firestore.instance
-                    .collection('Username')
-                    .document('$userName')
-                    .updateData(
-                        {'userkey': "", 'status': "Not Reserve", 'place': ''});
+                  .collection('Username')
+                  .document('$userName')
+                  .updateData(
+                      {'userkey': "", 'status': "Not Reserve", 'place': ''});
+                Firestore.instance
+                  .collection('Reserved Data')
+                  .document('$userkey')
+                  .setData({
+                'status': "Cancelled"
+                });
                 Navigator.push(
               context,
               MaterialPageRoute(
@@ -570,6 +576,12 @@ class _ReservedPageState extends State<ReservedPagee>
           .collection('ScanerTest')
           .document('$userkey')
           .delete();
+      await Firestore.instance
+          .collection('Reserved Data')
+          .document('$userkey')
+          .setData({
+        'status': "Cancelled"
+      });
       status = 'Not Reserve';
       Navigator.push(
           context,
